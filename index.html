@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elan Saytı</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 15px; background: #f4f4f9; }
+    h1 { text-align: center; color: #333; }
+    .form-container { background: #fff; padding: 15px; border-radius: 8px; max-width: 400px; margin: 0 auto 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    input, textarea, select, button { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+    button { background: #28a745; color: white; font-weight: bold; border: none; cursor: pointer; }
+    .announcements { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
+    .card { background: white; border-radius: 8px; padding: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .card img { width: 100%; height: 180px; object-fit: cover; border-radius: 5px; }
+    .price { color: #28a745; font-weight: bold; font-size: 1.2em; }
+  </style>
+</head>
+<body>
+
+  <h1>Elan Saytı</h1>
+
+  <div class="form-container">
+    <h3>Yeni Elan Əlavə Et</h3>
+    <input type="text" id="title" placeholder="Elanın başlığı" required>
+    <input type="number" id="price" placeholder="Qiymət (AZN)" required>
+    <input type="tel" id="phone" placeholder="Əlaqə nömrəsi" required>
+    <select id="category">
+      <option value="Nəqliyyat">Nəqliyyat</option>
+      <option value="Daşınmaz Əmlak">Daşınmaz Əmlak</option>
+      <option value="Elektronika">Elektronika</option>
+      <option value="Digər">Digər</option>
+    </select>
+    <textarea id="description" placeholder="Ətraflı məlumat"></textarea>
+    <input type="file" id="image" accept="image/*">
+    <button onclick="addAnnouncement()">Elanı Yerləşdir</button>
+  </div>
+
+  <h2>Son Elanlar</h2>
+  <div class="announcements" id="announcements-list"></div>
+
+  <script>
+    const SUPABASE_URL = "https://sqtiawgpiyevphybilen.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_qLFPLKZe80duJ7zYssQJXg_1lu_lsMV";
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function loadAnnouncements() {
+      const { data, error } = await _supabase.from('announcements').select('*').order('created_at', { ascending: false });
+      if (error) return console.error(error);
+      
+      const list = document.getElementById('announcements-list');
+      list.innerHTML = '';
+      data.forEach(item => {
+        list.innerHTML += `
+          <div class="card">
+            ${item.image_url ? `<img src="${item.image_url}">` : ''}
+            <h3>${item.title}</h3>
+            <p class="price">${item.price} AZN</p>
+            <p><strong>Kateqoriya:</strong> ${item.category}</p>
+            <p>${item.description || ''}</p>
+            <p><strong>Əlaqə:</strong> ${item.phone}</p>
+          </div>
+        `;
+      });
+    }
+
+    async function addAnnouncement() {
+      const title = document.getElementById('title').value;
+      const price = document.getElementById('price').value;
+      const phone = document.getElementById('phone').value;
+      const category = document.getElementById('category').value;
+      const description = document.getElementById('description').value;
+      const imageFile = document.getElementById('image').files[0];
+
+      if (!title || !price || !phone) {
+        alert('Lütfən başlığı, qiyməti və nömrəni qeyd edin.');
+        return;
+      }
+
+      let image_url = '';
+
+      if (imageFile) {
+        const fileName = Date.now() + '_' + imageFile.name;
+        const { data, error } = await _supabase.storage.from('announcement-images').upload(fileName, imageFile);
+        if (error) {
+          alert('Şəkil yüklənərkən xəta oldu!');
+          return;
+        }
+        const { data: publicUrlData } = _supabase.storage.from('announcement-images').getPublicUrl(fileName);
+        image_url = publicUrlData.publicUrl;
+      }
+
+      const { error } = await _supabase.from('announcements').insert([{ title, price, phone, category, description, image_url }]);
+
+      if (error) {
+        alert('Elan əlavə edilmədi!');
+      } else {
+        alert('Elan uğurla əlavə olundu!');
+        location.reload();
+      }
+    }
+
+    loadAnnouncements();
+  </script>
+</body>
+</html>
