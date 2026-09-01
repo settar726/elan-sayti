@@ -60,6 +60,7 @@
             <p><strong>Kateqoriya:</strong> ${item.category}</p>
             <p>${item.description || ''}</p>
             <p><strong>Əlaqə:</strong> ${item.phone}</p>
+          <button onclick="deleteAnnouncement(${item.id})" style="background-color: #ff4d4d; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-top: 8px;">Elanı Sil</button>
           </div>
         `;
       });
@@ -102,6 +103,22 @@
     }
 
     loadAnnouncements();
+
+  async function deleteAnnouncement(id) {
+    if (!confirm('Bu elanı silməyə əminsiniz?')) return;
+
+    const { error } = await _supabase
+        .from('announcements')
+        .delete()
+        .eq('id', id);
+
+    if (error) {
+        alert('Xəta baş verdi: ' + error.message);
+    } else {
+        alert('Elan uğurla silindi!');
+        location.reload();
+    }
+  }
   </script>
 </body>
 </html>
