@@ -33,7 +33,6 @@
         <button onclick="signOut()" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Çıxış Et</button>
     </div>
   </div>
-  
 
   <div class="form-container">
     <h3>Yeni Elan Əlavə Et</h3>
@@ -60,34 +59,34 @@
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     async function loadAnnouncements() {
-    const { data: { user } } = await _supabase.auth.getUser();
-    const { data, error } = await _supabase.from('announcements').select('*');
-    if (error) return console.error(error);
+      const { data: { user } } = await _supabase.auth.getUser();
+      const { data, error } = await _supabase.from('announcements').select('*');
+      if (error) return console.error(error);
 
-    const container = document.getElementById('announcements');
-    container.innerHTML = '';
+      const container = document.getElementById('announcements-list');
+      if (!container) return;
+      container.innerHTML = '';
 
-    data.forEach(item => {
-        const isOwner = user && user.id === item.user_id;
-        container.innerHTML += `
-            <div class="card">
-                ${item.image_url ? `<img src="${item.image_url}">` : ''}
-                <h3>${item.title}</h3>
-                <p class="price">${item.price} AZN</p>
-                <p><strong>Kateqoriya:</strong> ${item.category}</p>
-                <p>${item.description || ''}</p>
-                <p><strong>Əlaqə:</strong> ${item.phone}</p>
-                ${isOwner ? `<button onclick="deleteAnnouncement('${item.id}')" style="background: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Elanı Sil</button>` : ''}
-            </div>
-        `;
-    });
+      data.forEach(item => {
+          const isOwner = user && user.id === item.user_id;
+          container.innerHTML += `
+              <div class="card">
+                  ${item.image_url ? `<img src="${item.image_url}">` : ''}
+                  <h3>${item.title}</h3>
+                  <p class="price">${item.price} AZN</p>
+                  <p><strong>Kateqoriya:</strong> ${item.category}</p>
+                  <p>${item.description || ''}</p>
+                  <p><strong>Əlaqə:</strong> ${item.phone}</p>
+                  ${isOwner ? `<button onclick="deleteAnnouncement('${item.id}')" style="background: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Elanı Sil</button>` : ''}
+              </div>
+          `;
+      });
     }
-    
-    
 
     async function addAnnouncement() {
-          const { data: { user } } = await _supabase.auth.getUser();
-    if (!user) return alert("Elan yerləşdirmək üçün əvvəlcə daxil olmalısınız!");
+      const { data: { user } } = await _supabase.auth.getUser();
+      if (!user) return alert("Elan yerləşdirmək üçün əvvəlcə daxil olmalısınız!");
+
       const title = document.getElementById('title').value;
       const price = document.getElementById('price').value;
       const phone = document.getElementById('phone').value;
@@ -102,88 +101,84 @@
 
       let image_url = '';
 
-          if (imageFile) {
-      const fileName = Date.now() + '_' + imageFile.name;
-      const { data, error } = await _supabase.storage.from('announcement-images').upload(fileName, imageFile);
-      if (error) {
-        alert('Şəkil yüklənərkən xəta oldu!');
-        return;
+      if (imageFile) {
+        const fileName = Date.now() + '_' + imageFile.name;
+        const { data, error } = await _supabase.storage.from('announcement-images').upload(fileName, imageFile);
+        if (error) {
+          alert('Şəkil yüklənərkən xəta oldu: ' + error.message);
+          return;
+        }
+        const { data: publicUrlData } = _supabase.storage.from('announcement-images').getPublicUrl(fileName);
+        image_url = publicUrlData.publicUrl;
       }
-      const { data: publicUrlData } = _supabase.storage.from('announcement-images').getPublicUrl(fileName);
-      image_url = publicUrlData.publicUrl;
-          }
-      
 
-          const { error } = await _supabase.from('announcements').insert([{ title, price, phone, category, description, image_url, user_id: user.id }]);
+      const { error } = await _supabase.from('announcements').insert([
+        { title, price, phone, category, description, image_url, user_id: user.id }
+      ]);
 
       if (error) {
-       alert('Elan xətası: ' + error.message);
+        alert('Elan xətası: ' + error.message);
       } else {
         alert('Elan uğurla əlavə olundu!');
         location.reload();
       }
     }
 
+    async function deleteAnnouncement(id) {
+      if (!confirm('Bu elanı silməyə əminsiniz?')) return;
+
+      const { error } = await _supabase
+          .from('announcements')
+          .delete()
+          .eq('id', id);
+
+      if (error) {
+          alert('Xəta baş verdi: ' + error.message);
+      } else {
+          alert('Elan uğurla silindi!');
+          location.reload();
+      }
+    }
+
+    async function signUp() {
+      const email = document.getElementById('auth-email').value;
+      const password = document.getElementById('auth-password').value;
+      if (!email || !password) return alert('E-poçt və şifrəni daxil edin!');
+      
+      const { error } = await _supabase.auth.signUp({ email, password });
+      if (error) alert("Qeydiyyat xətası: " + error.message);
+      else alert("Qeydiyyat uğurludur! Giriş edə bilərsiniz.");
+    }
+
+    async function signIn() {
+      const email = document.getElementById('auth-email').value;
+      const password = document.getElementById('auth-password').value;
+      if (!email || !password) return alert('E-poçt və şifrəni daxil edin!');
+
+      const { error } = await _supabase.auth.signInWithPassword({ email, password });
+      if (error) alert("Giriş xətası: " + error.message);
+      else {
+          alert("Giriş edildi!");
+          location.reload();
+      }
+    }
+
+    async function signOut() {
+      await _supabase.auth.signOut();
+      location.reload();
+    }
+
+    async function checkUser() {
+      const { data: { user } } = await _supabase.auth.getUser();
+      if (user) {
+          document.getElementById('auth-inputs').style.display = 'none';
+          document.getElementById('user-info').style.display = 'block';
+          document.getElementById('user-email').innerText = "Hesab: " + user.email;
+      }
+    }
+
+    checkUser();
     loadAnnouncements();
-
-  async function deleteAnnouncement(id) {
-    if (!confirm('Bu elanı silməyə əminsiniz?')) return;
-
-    const { error } = await _supabase
-        .from('announcements')
-        .delete()
-        .eq('id', id);
-
-    if (error) {
-        alert('Xəta baş verdi: ' + error.message);
-    } else {
-        alert('Elan uğurla silindi!');
-        location.reload();
-    }
-  }
-    
-  
-  // Qeydiyyat funksiyası
-async function signUp() {
-    const email = document.getElementById('auth-email').value;
-    const password = document.getElementById('auth-password').value;
-    if (!email || !password) return alert('E-poçt və şifrəni daxil edin!');
-    
-    const { error } = await _supabase.auth.signUp({ email, password });
-    if (error) alert("Qeydiyyat xətası: " + error.message);
-    else alert("Qeydiyyat uğurludur! Giriş edə bilərsiniz.");
-}
-
-// Giriş funksiyası
-async function signIn() {
-    const email = document.getElementById('auth-email').value;
-    const password = document.getElementById('auth-password').value;
-    if (!email || !password) return alert('E-poçt və şifrəni daxil edin!');
-
-    const { error } = await _supabase.auth.signInWithPassword({ email, password });
-    if (error) alert("Giriş xətası: " + error.message);
-    else {
-        alert("Giriş edildi!");
-        location.reload();
-    }
-}
-
-// Çıxış funksiyası
-async function signOut() {
-    await _supabase.auth.signOut();
-    location.reload();
-}
-
-// İstifadəçini yoxlamaq
-async function checkUser() {
-    const { data: { user } } = await _supabase.auth.getUser();
-    if (user) {
-        document.getElementById('auth-inputs').style.display = 'none';
-        document.getElementById('user-info').style.display = 'block';
-        document.getElementById('user-email').innerText = "Hesab: " + user.email;
-    }
-}
-checkUser();
-</script>
+  </script>
 </body>
 </html>
