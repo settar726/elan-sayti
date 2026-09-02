@@ -123,6 +123,22 @@
     .btn-danger { background: #fff; color: #E4483A; border: 1.5px solid #F3B3AC; box-shadow: none; }
     .btn-danger:hover { background: #FFF1EF; }
 
+    .remember-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.88rem;
+      color: #55504A;
+      margin: 2px 0 12px;
+      cursor: pointer;
+    }
+    .remember-row input[type="checkbox"] {
+      width: 17px;
+      height: 17px;
+      accent-color: var(--violet);
+      cursor: pointer;
+    }
+
     #user-info p {
       font-weight: 700;
       margin: 0 0 12px;
@@ -312,15 +328,20 @@
   </div>
 
   <div id="auth-container" class="auth-card">
-    <div id="auth-inputs">
+    <form id="auth-inputs" onsubmit="return false;">
         <h3>Giriş / Qeydiyyat</h3>
-        <input type="email" id="auth-email" class="field" placeholder="E-poçt ünvanı">
-        <input type="password" id="auth-password" class="field" placeholder="Şifrə">
+        <input type="text" id="auth-name" name="name" class="field" placeholder="Ad Soyad (qeydiyyat üçün)" autocomplete="name">
+        <input type="email" id="auth-email" name="email" class="field" placeholder="E-poçt ünvanı" autocomplete="username">
+        <input type="password" id="auth-password" name="password" class="field" placeholder="Şifrə" autocomplete="current-password">
+        <label class="remember-row">
+          <input type="checkbox" id="remember-me" checked>
+          <span>Məni yadda saxla</span>
+        </label>
         <div class="btn-row">
-          <button onclick="signIn()" class="btn btn-primary">Giriş Et</button>
-          <button onclick="signUp()" class="btn btn-secondary">Qeydiyyat</button>
+          <button type="submit" onclick="signIn()" class="btn btn-primary">Giriş Et</button>
+          <button type="submit" onclick="signUp()" class="btn btn-secondary">Qeydiyyat</button>
         </div>
-    </div>
+    </form>
     <div id="user-info" style="display: none;">
         <p id="user-email"></p>
         <button onclick="signOut()" class="btn btn-danger">Çıxış Et</button>
@@ -385,6 +406,7 @@
                   <br>
                   <span class="cat-pill ${categoryClass(item.category)}">${item.category}</span>
                   <p class="desc">${item.description || ''}</p>
+                  <p class="contact"><strong>Elan sahibi:</strong> ${item.owner_name || 'İstifadəçi'}</p>
                   <p class="contact"><strong>Əlaqə:</strong> ${item.phone}</p>
                 </div>
                 ${isOwner ? `<button class="delete-btn" onclick="deleteAnnouncement('${item.id}')">Elanı Sil</button>` : ''}
@@ -422,8 +444,10 @@
         image_url = publicUrlData.publicUrl;
       }
 
+      const owner_name = user.user_metadata?.full_name || user.email;
+
       const { error } = await _supabase.from('announcements').insert([
-        { title, price, phone, category, description, image_url, user_id: user.id }
+        { title, price, phone, category, description, image_url, user_id: user.id, owner_name }
       ]);
 
       if (error) {
@@ -451,11 +475,16 @@
     }
 
     async function signUp() {
+      const name = document.getElementById('auth-name').value;
       const email = document.getElementById('auth-email').value;
       const password = document.getElementById('auth-password').value;
-      if (!email || !password) return alert('E-poçt və şifrəni daxil edin!');
+      if (!name || !email || !password) return alert('Ad, e-poçt və şifrəni daxil edin!');
 
-      const { error } = await _supabase.auth.signUp({ email, password });
+      const { error } = await _supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { full_name: name } }
+      });
       if (error) alert("Qeydiyyat xətası: " + error.message);
       else alert("Qeydiyyat uğurludur! Giriş edə bilərsiniz.");
     }
@@ -463,11 +492,17 @@
     async function signIn() {
       const email = document.getElementById('auth-email').value;
       const password = document.getElementById('auth-password').value;
+      const remember = document.getElementById('remember-me').checked;
       if (!email || !password) return alert('E-poçt və şifrəni daxil edin!');
 
       const { error } = await _supabase.auth.signInWithPassword({ email, password });
       if (error) alert("Giriş xətası: " + error.message);
       else {
+          if (remember) {
+            localStorage.setItem('remembered_email', email);
+          } else {
+            localStorage.removeItem('remembered_email');
+          }
           alert("Giriş edildi!");
           location.reload();
       }
@@ -483,7 +518,13 @@
       if (user) {
           document.getElementById('auth-inputs').style.display = 'none';
           document.getElementById('user-info').style.display = 'block';
-          document.getElementById('user-email').innerText = "Hesab: " + user.email;
+          const displayName = user.user_metadata?.full_name || user.email;
+          document.getElementById('user-email').innerText = "Salam, " + displayName;
+      } else {
+          const rememberedEmail = localStorage.getItem('remembered_email');
+          if (rememberedEmail) {
+            document.getElementById('auth-email').value = rememberedEmail;
+          }
       }
     }
 
