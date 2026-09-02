@@ -431,8 +431,10 @@
       width: calc(100% - 28px);
       max-width: 420px;
       align-items: center;
+      pointer-events: none;
     }
     .toast {
+      pointer-events: auto;
       background: var(--ink);
       color: #fff;
       padding: 12px 18px;
@@ -567,6 +569,15 @@
   <div id="toast-container"></div>
 
   <script>
+    if (typeof supabase === 'undefined') {
+      document.body.insertAdjacentHTML('afterbegin',
+        '<div style="background:#E4483A;color:#fff;padding:14px;border-radius:12px;margin:14px 0;font-family:sans-serif;font-weight:600;">' +
+        'Sayt tam yüklənmədi (internet bağlantısı problemi ola bilər). Səhifəni yeniləyin və ya başqa brauzerdə (Chrome) açın.' +
+        '</div>'
+      );
+      throw new Error('Supabase library failed to load from CDN');
+    }
+
     const SUPABASE_URL = "https://sqtiawgpiyevphybilen.supabase.co";
     const SUPABASE_KEY = "sb_publishable_qLFPLKZe80duJ7zYssQJXg_1lu_lsMV";
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -630,20 +641,4 @@
         filtered = filtered.slice().sort((a, b) => a.price - b.price);
       } else if (sortBy === 'price-desc') {
         filtered = filtered.slice().sort((a, b) => b.price - a.price);
-      } else if (allAnnouncements.some(item => item.created_at)) {
-        filtered = filtered.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      }
-
-      renderAnnouncements(filtered);
-    }
-
-    function renderAnnouncements(items) {
-      const container = document.getElementById('announcements-list');
-      if (!container) return;
-
-      if (!items || items.length === 0) {
-        container.innerHTML = '<div class="empty-state">Uyğun elan tapılmadı.</div>';
-        return;
-      }
-
-      container.innerHTML =
+      } else if (allA
