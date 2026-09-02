@@ -498,21 +498,21 @@
           <button type="button" id="tab-signup-btn" class="tab-btn" onclick="showTab('signup')">Qeydiyyat</button>
         </div>
 
-        <form id="login-form" onsubmit="return false;">
+        <form id="login-form" onsubmit="event.preventDefault(); signIn(); return false;">
           <input type="email" id="login-email" name="email" class="field" placeholder="E-poçt ünvanı" autocomplete="username">
           <input type="password" id="login-password" name="password" class="field" placeholder="Şifrə" autocomplete="current-password">
           <label class="remember-row">
             <input type="checkbox" id="remember-me" checked>
             <span>Məni yadda saxla</span>
           </label>
-          <button type="submit" onclick="signIn()" class="btn btn-primary">Giriş Et</button>
+          <button type="button" onclick="signIn()" class="btn btn-primary">Giriş Et</button>
         </form>
 
-        <form id="signup-form" onsubmit="return false;" style="display: none;">
+        <form id="signup-form" onsubmit="event.preventDefault(); signUp(); return false;" style="display: none;">
           <input type="text" id="signup-name" name="name" class="field" placeholder="Ad Soyad" autocomplete="name">
           <input type="email" id="signup-email" name="email" class="field" placeholder="E-poçt ünvanı" autocomplete="username">
           <input type="password" id="signup-password" name="password" class="field" placeholder="Şifrə" autocomplete="new-password">
-          <button type="submit" onclick="signUp()" class="btn btn-secondary">Qeydiyyatdan Keç</button>
+          <button type="button" onclick="signUp()" class="btn btn-secondary">Qeydiyyatdan Keç</button>
         </form>
     </div>
     <div id="user-info" style="display: none;">
@@ -646,5 +646,4 @@
         return;
       }
 
-      container.innerHTML = items.map(item => {
-        const isOwner = currentUser && currentU
+      container.innerHTML =
