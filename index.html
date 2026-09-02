@@ -82,6 +82,8 @@
     }
 
     async function addAnnouncement() {
+          const { data: { user } } = await _supabase.auth.getUser();
+    if (!user) return alert("Elan yerləşdirmək üçün əvvəlcə daxil olmalısınız!");
       const title = document.getElementById('title').value;
       const price = document.getElementById('price').value;
       const phone = document.getElementById('phone').value;
@@ -107,7 +109,7 @@
         image_url = publicUrlData.publicUrl;
       }
 
-      const { error } = await _supabase.from('announcements').insert([{ title, price, phone, category, description, image_url }]);
+          const { error } = await _supabase.from('announcements').insert([{ title, price, phone, category, description, image_url, user_id: user.id }]);
 
       if (error) {
         alert('Elan əlavə edilmədi!');
