@@ -2,249 +2,175 @@
 <html lang="az">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ElanSaytı — Müasir Elan Platforması</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ElanSaytı — Tap.az Üslubunda</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --bg: #f8fafc;
+      --primary: #ff4f00;
+      --primary-hover: #e04500;
+      --bg: #f2f4f7;
       --surface: #ffffff;
-      --text: #0f172a;
-      --text-muted: #64748b;
-      --border: #e2e8f0;
-      --radius: 16px;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
-      --shadow-md: 0 10px 25px -5px rgba(0,0,0,0.05);
+      --text: #212121;
+      --text-muted: #8d94a0;
+      --border: #eaedf1;
+      --radius: 12px;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-family: 'Inter', sans-serif;
       background-color: var(--bg);
       color: var(--text);
-      line-height: 1.5;
-      padding-bottom: 60px;
+      padding-bottom: 80px;
     }
 
+    /* Top Header */
     header {
       background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 16px 24px;
+      padding: 12px 16px;
       position: sticky;
       top: 0;
       z-index: 100;
-      backdrop-filter: blur(8px);
-      background-color: rgba(255, 255, 255, 0.9);
+      border-bottom: 1px solid var(--border);
     }
 
-    .header-container {
-      max-width: 1100px;
-      margin: 0 auto;
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+
+    .search-box {
+      position: relative;
+      width: 100%;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 12px 16px 12px 42px;
+      border: none;
+      background: #f0f2f5;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .search-box svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      fill: var(--text-muted);
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Category Carousel */
+    .categories-container {
+      background: var(--surface);
+      padding: 12px 0 16px 16px;
+      margin-bottom: 8px;
+      overflow-x: auto;
+      white-space: nowrap;
+      scrollbar-width: none;
+    }
+    .categories-container::-webkit-scrollbar { display: none; }
+
+    .category-item {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      margin-right: 16px;
+      cursor: pointer;
+      width: 72px;
+      text-align: center;
+    }
+
+    .category-icon {
+      width: 56px;
+      height: 56px;
+      background: #f8f9fa;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .category-name {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text);
+      white-space: normal;
+      line-height: 1.2;
+    }
+
+    /* Main Content */
+    .main-container {
+      padding: 0 12px;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 12px 4px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    .logo {
-      font-weight: 800;
-      font-size: 1.4rem;
-      color: var(--primary);
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .logo-badge {
-      background: rgba(37, 99, 235, 0.1);
-      color: var(--primary);
-      font-size: 0.75rem;
-      padding: 2px 8px;
-      border-radius: 20px;
-      font-weight: 600;
-    }
-
-    .container {
-      max-width: 1100px;
-      margin: 32px auto 0;
-      padding: 0 16px;
-      display: grid;
-      grid-template-columns: 360px 1fr;
-      gap: 32px;
-    }
-
-    @media (max-width: 850px) {
-      .container {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .panel {
-      background: var(--surface);
-      border-radius: var(--radius);
-      padding: 24px;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-sm);
-      margin-bottom: 24px;
-    }
-
-    .panel-title {
-      font-size: 1.15rem;
-      font-weight: 700;
-      margin-bottom: 16px;
-      color: var(--text);
-    }
-
-    /* Tab Stilinin Hazırlanması */
-    .tab-buttons {
-      display: flex;
-      background: #f1f5f9;
-      padding: 4px;
-      border-radius: 12px;
-      margin-bottom: 18px;
-    }
-
-    .tab-btn {
-      flex: 1;
-      padding: 10px;
-      border: none;
-      background: transparent;
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      cursor: pointer;
-      border-radius: 8px;
-      transition: all 0.2s ease;
-    }
-
-    .tab-btn.active {
-      background: #ffffff;
-      color: var(--primary);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-    }
-
-    .tab-content {
-      display: none;
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    .form-group {
-      margin-bottom: 14px;
-    }
-
-    label {
-      display: block;
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: var(--text-muted);
-    }
-
-    input, select, textarea {
-      width: 100%;
-      padding: 12px 14px;
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
-      font-family: inherit;
-      font-size: 0.95rem;
-      background: #fafafa;
-      color: var(--text);
-      transition: all 0.2s ease;
-    }
-
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: var(--primary);
-      background: #fff;
-      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
-
-    .btn {
-      width: 100%;
-      padding: 12px 16px;
-      border: none;
-      border-radius: 10px;
-      font-family: inherit;
-      font-weight: 600;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      margin-top: 4px;
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: var(--primary-hover);
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
-    }
-
-    .btn-danger {
-      background: #fef2f2;
-      color: #ef4444;
-      border: 1px solid #fecaca;
-    }
-
-    .btn-danger:hover {
-      background: #fee2e2;
-    }
-
-    .section-header {
-      margin-bottom: 20px;
-    }
-
-    .section-title {
-      font-size: 1.3rem;
-      font-weight: 700;
-    }
-
+    /* 2 Sütunlu Grid */
     .announcements-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    @media (min-width: 768px) {
+      .announcements-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .main-container {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
     }
 
     .card {
       background: var(--surface);
       border-radius: var(--radius);
-      border: 1px solid var(--border);
       overflow: hidden;
-      box-shadow: var(--shadow-sm);
-      transition: all 0.25s ease;
       display: flex;
       flex-direction: column;
-    }
-
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-md);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      position: relative;
     }
 
     .card-img-wrapper {
       width: 100%;
-      height: 160px;
-      background: #e2e8f0;
+      height: 140px;
+      background: #eef1f5;
       position: relative;
     }
 
@@ -254,178 +180,305 @@
       object-fit: cover;
     }
 
-    .card-category {
+    .card-badge {
       position: absolute;
-      top: 10px;
-      left: 10px;
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(4px);
+      bottom: 8px;
+      left: 8px;
+      background: #2563eb;
       color: #fff;
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 4px 10px;
-      border-radius: 20px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 3px 6px;
+      border-radius: 4px;
     }
 
     .card-body {
-      padding: 16px;
-      flex: 1;
+      padding: 10px;
       display: flex;
       flex-direction: column;
-    }
-
-    .card-title {
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 6px;
-      line-height: 1.3;
-      color: var(--text);
+      flex: 1;
     }
 
     .card-price {
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       font-weight: 800;
-      color: var(--primary);
-      margin-bottom: 10px;
+      color: var(--text);
+      margin-bottom: 4px;
     }
 
-    .card-desc {
+    .card-price span {
+      font-size: 0.9rem;
+      color: var(--primary);
+    }
+
+    .card-title {
       font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-bottom: 14px;
-      flex: 1;
+      font-weight: 500;
+      color: #4a5568;
+      line-height: 1.3;
+      margin-bottom: 8px;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
+      height: 2.6em;
     }
 
     .card-footer {
-      border-top: 1px solid var(--border);
-      padding-top: 10px;
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       color: var(--text-muted);
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+      margin-top: auto;
     }
 
-    .user-badge {
+    .btn-delete {
+      background: #fee2e2;
+      color: #dc2626;
+      border: none;
+      padding: 6px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: 8px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    /* Modal / Popup Windows */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .modal.active { display: flex; }
+
+    .modal-content {
+      background: var(--surface);
+      width: 100%;
+      max-width: 500px;
+      border-radius: 20px 20px 0 0;
+      padding: 20px;
+      max-height: 85vh;
+      overflow-y: auto;
+      animation: slideUp 0.25s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .modal-title { font-weight: 700; font-size: 1.1rem; }
+    .close-btn { font-size: 1.5rem; border: none; background: none; cursor: pointer; }
+
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem;
+    }
+
+    .btn-submit {
+      width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; margin-top: 10px; cursor: pointer;
+    }
+
+    /* Bottom Navigation Bar */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      height: 60px;
+      z-index: 150;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-muted);
+      font-size: 0.65rem;
+      text-decoration: none;
+      cursor: pointer;
+      background: none;
+      border: none;
+      width: 20%;
+    }
+
+    .nav-item.active { color: var(--primary); }
+    .nav-item svg { width: 22px; height: 22px; margin-bottom: 2px; fill: currentColor; }
+
+    .add-btn-wrapper {
+      position: relative;
+      top: -14px;
+    }
+
+    .add-btn {
+      width: 48px;
+      height: 48px;
+      background: var(--primary);
+      border-radius: 50%;
       display: flex;
       align-items: center;
-      gap: 6px;
-      background: #f1f5f9;
-      padding: 12px;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      margin-bottom: 12px;
+      justify-content: center;
+      color: white;
+      box-shadow: 0 4px 10px rgba(255, 79, 0, 0.4);
+      border: none;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
+  <!-- Top Header -->
   <header>
-    <div class="header-container">
-      <a href="#" class="logo">
-        ElanSaytı <span class="logo-badge">PRO</span>
-      </a>
+    <div class="header-top">
+      <a href="#" class="logo">tap.az</a>
+    </div>
+    <div class="search-box">
+      <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <input type="text" id="searchInput" onkeyup="filterAnnouncements()" placeholder="Əşya və ya xidmət axtarışı">
     </div>
   </header>
 
-  <div class="container">
-    
-    <div class="sidebar">
-      
-      <!-- Ayrılmış Giriş və Qeydiyyat Paneli -->
-      <div class="panel" id="auth-box">
-        <div class="tab-buttons">
-          <button class="tab-btn active" onclick="switchTab('login')">Giriş</button>
-          <button class="tab-btn" onclick="switchTab('register')">Qeydiyyat</button>
-        </div>
-
-        <!-- Giriş Formu -->
-        <div class="tab-content active" id="login-tab">
-          <div class="form-group">
-            <label>E-poçt Ünvanı</label>
-            <input type="email" id="login-email" placeholder="nümayəndə@mail.com">
-          </div>
-          <div class="form-group">
-            <label>Şifrə</label>
-            <input type="password" id="login-password" placeholder="••••••••">
-          </div>
-          <button onclick="signIn()" class="btn btn-primary">Daxil Ol</button>
-        </div>
-
-        <!-- Qeydiyyat Formu -->
-        <div class="tab-content" id="register-tab">
-          <div class="form-group">
-            <label>Ad və Soyad</label>
-            <input type="text" id="reg-fullname" placeholder="Orxan Məmmədov">
-          </div>
-          <div class="form-group">
-            <label>E-poçt Ünvanı</label>
-            <input type="email" id="reg-email" placeholder="nümayəndə@mail.com">
-          </div>
-          <div class="form-group">
-            <label>Şifrə</label>
-            <input type="password" id="reg-password" placeholder="••••••••">
-          </div>
-          <button onclick="signUp()" class="btn btn-primary">Hesab Yarat</button>
-        </div>
-      </div>
-
-      <!-- Daxil Olmuş İstifadəçi Paneli -->
-      <div class="panel" id="user-box" style="display: none;">
-        <div class="user-badge" id="user-name">👤 Xoş gəldiniz</div>
-        <button onclick="signOut()" class="btn btn-danger">Hesabdan Çıx</button>
-      </div>
-
-      <!-- Elan Əlavə Etmə Paneli -->
-      <div class="panel">
-        <h3 class="panel-title">Yeni Elan Yerləşdir</h3>
-        <div class="form-group">
-          <label>Elan Başlığı</label>
-          <input type="text" id="title" placeholder="Məs: iPhone 13 Pro Max">
-        </div>
-        <div class="form-group">
-          <label>Qiymət (AZN)</label>
-          <input type="number" id="price" placeholder="Məs: 1200">
-        </div>
-        <div class="form-group">
-          <label>Əlaqə Nömrəsi</label>
-          <input type="tel" id="phone" placeholder="050 000 00 00">
-        </div>
-        <div class="form-group">
-          <label>Kateqoriya</label>
-          <select id="category">
-            <option value="Nəqliyyat">🚗 Nəqliyyat</option>
-            <option value="Daşınmaz Əmlak">🏠 Daşınmaz Əmlak</option>
-            <option value="Elektronika">📱 Elektronika</option>
-            <option value="Digər">📦 Digər</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Ətraflı Məlumat</label>
-          <textarea id="description" placeholder="Məhsul haqqında qısa məlumat yazın..."></textarea>
-        </div>
-        <div class="form-group">
-          <label>Şəkil Yüklə</label>
-          <input type="file" id="image" accept="image/*">
-        </div>
-        <button onclick="addAnnouncement()" class="btn btn-primary">Elanı Dərc Et</button>
-      </div>
-
+  <!-- Categories Carousel -->
+  <div class="categories-container">
+    <div class="category-item" onclick="filterByCategory('Bütün')">
+      <div class="category-icon">🏷️</div>
+      <div class="category-name">Kataloq</div>
     </div>
-
-    <!-- Elanlar Siyahısı -->
-    <div class="content">
-      <div class="section-header">
-        <h2 class="section-title">Son Elanlar</h2>
-      </div>
-      <div class="announcements-grid" id="list"></div>
+    <div class="category-item" onclick="filterByCategory('Nəqliyyat')">
+      <div class="category-icon">🚗</div>
+      <div class="category-name">Nəqliyyat</div>
     </div>
+    <div class="category-item" onclick="filterByCategory('Daşınmaz Əmlak')">
+      <div class="category-icon">🏠</div>
+      <div class="category-name">Daşınmaz Əmlak</div>
+    </div>
+    <div class="category-item" onclick="filterByCategory('Elektronika')">
+      <div class="category-icon">📱</div>
+      <div class="category-name">Elektronika</div>
+    </div>
+    <div class="category-item" onclick="filterByCategory('Digər')">
+      <div class="category-icon">📦</div>
+      <div class="category-name">Digər</div>
+    </div>
+  </div>
 
+  <!-- Main Feed -->
+  <div class="main-container">
+    <div class="section-title">
+      <span>Son elanlar</span>
+    </div>
+    <div class="announcements-grid" id="list"></div>
+  </div>
+
+  <!-- Bottom Navigation Bar -->
+  <nav class="bottom-nav">
+    <button class="nav-item active">
+      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      Əsas
+    </button>
+    <button class="nav-item" onclick="openAuthModal()">
+      <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      Seçilmişlər
+    </button>
+    <div class="add-btn-wrapper">
+      <button class="add-btn" onclick="openAddModal()">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="white"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+      </button>
+    </div>
+    <button class="nav-item" onclick="openAuthModal()">
+      <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
+      Mesajlar
+    </button>
+    <button class="nav-item" onclick="openAuthModal()">
+      <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+      <span id="cabinetText">Kabinet</span>
+    </button>
+  </nav>
+
+  <!-- Elan Əlavə Et Modal -->
+  <div class="modal" id="addModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Yeni Elan Yerləşdir</div>
+        <button class="close-btn" onclick="closeModal('addModal')">&times;</button>
+      </div>
+      <div class="form-group">
+        <label>Elan Başlığı</label>
+        <input type="text" id="title" placeholder="Məs: VAZ 2106">
+      </div>
+      <div class="form-group">
+        <label>Qiymət (AZN)</label>
+        <input type="number" id="price" placeholder="Məs: 4500">
+      </div>
+      <div class="form-group">
+        <label>Əlaqə Nömrəsi</label>
+        <input type="tel" id="phone" placeholder="050 000 00 00">
+      </div>
+      <div class="form-group">
+        <label>Kateqoriya</label>
+        <select id="category">
+          <option value="Nəqliyyat">Nəqliyyat</option>
+          <option value="Daşınmaz Əmlak">Daşınmaz Əmlak</option>
+          <option value="Elektronika">Elektronika</option>
+          <option value="Digər">Digər</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Ətraflı Məlumat</label>
+        <textarea id="description" rows="3" placeholder="Elan haqqında etraflı..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Şəkil</label>
+        <input type="file" id="image" accept="image/*">
+      </div>
+      <button class="btn-submit" onclick="addAnnouncement()">Dərc Et</button>
+    </div>
+  </div>
+
+  <!-- Qeydiyyat / Giriş Modal -->
+  <div class="modal" id="authModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title" id="authTitle">Hesaba Giriş</div>
+        <button class="close-btn" onclick="closeModal('authModal')">&times;</button>
+      </div>
+      <div id="authForms">
+        <div class="form-group" id="fullNameGroup" style="display:none;">
+          <label>Ad və Soyad</label>
+          <input type="text" id="fullname" placeholder="Orxan Məmmədov">
+        </div>
+        <div class="form-group">
+          <label>E-poçt Ünvanı</label>
+          <input type="email" id="email" placeholder="numune@mail.com">
+        </div>
+        <div class="form-group">
+          <label>Şifrə</label>
+          <input type="password" id="password" placeholder="••••••••">
+        </div>
+        <button class="btn-submit" id="authMainBtn" onclick="signIn()">Daxil Ol</button>
+        <button class="btn-submit" style="background:#e2e8f0; color:#333; margin-top:8px;" id="authToggleBtn" onclick="toggleAuthMode()">Qeydiyyatdan Keç</button>
+      </div>
+      <div id="userInfo" style="display:none; text-align:center;">
+        <h3 id="userNameText" style="margin-bottom:15px;"></h3>
+        <button class="btn-submit" style="background:#fee2e2; color:#dc2626;" onclick="signOut()">Çıxış Et</button>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -433,24 +486,39 @@
     const SUPABASE_KEY = "sb_publishable_qLFPLKZe80duJ7zYssQJXg_1lu_lsMV";
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Tab dəyişdirmə funksiyası
-    function switchTab(tabName) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    let allData = [];
+    let isRegisterMode = false;
 
-      if (tabName === 'login') {
-        document.querySelectorAll('.tab-btn')[0].classList.add('active');
-        document.getElementById('login-tab').classList.add('active');
+    function openAddModal() { document.getElementById('addModal').classList.add('active'); }
+    function openAuthModal() { document.getElementById('authModal').classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+    function toggleAuthMode() {
+      isRegisterMode = !isRegisterMode;
+      const title = document.getElementById('authTitle');
+      const nameGroup = document.getElementById('fullNameGroup');
+      const mainBtn = document.getElementById('authMainBtn');
+      const toggleBtn = document.getElementById('authToggleBtn');
+
+      if (isRegisterMode) {
+        title.innerText = "Qeydiyyat";
+        nameGroup.style.display = "block";
+        mainBtn.innerText = "Qeydiyyatdan Keç";
+        mainBtn.setAttribute("onclick", "signUp()");
+        toggleBtn.innerText = "Giriş Bölməsinə Keç";
       } else {
-        document.querySelectorAll('.tab-btn')[1].classList.add('active');
-        document.getElementById('register-tab').classList.add('active');
+        title.innerText = "Hesaba Giriş";
+        nameGroup.style.display = "none";
+        mainBtn.innerText = "Daxil Ol";
+        mainBtn.setAttribute("onclick", "signIn()");
+        toggleBtn.innerText = "Qeydiyyatdan Keç";
       }
     }
 
     async function signUp() {
-      const email = document.getElementById('reg-email').value;
-      const password = document.getElementById('reg-password').value;
-      const fullName = document.getElementById('reg-fullname').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const fullName = document.getElementById('fullname').value;
 
       if (!email || !password || !fullName) return alert("Bütün xanaları doldurun!");
 
@@ -460,16 +528,14 @@
 
       if (error) alert("Xəta: " + error.message);
       else {
-        alert("Qeydiyyat uğurla tamamlandı! İndi Giriş bölməsindən daxil ola bilərsiniz.");
-        switchTab('login');
+        alert("Qeydiyyat tamamlandı!");
+        toggleAuthMode();
       }
     }
 
     async function signIn() {
-      const email = document.getElementById('login-email').value;
-      const password = document.getElementById('login-password').value;
-
-      if (!email || !password) return alert("E-poçt və şifrəni daxil edin!");
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
 
       const { error } = await _supabase.auth.signInWithPassword({ email, password });
       if (error) alert("Giriş xətası: " + error.message);
@@ -484,10 +550,11 @@
     async function checkUser() {
       const { data: { user } } = await _supabase.auth.getUser();
       if (user) {
-        document.getElementById('auth-box').style.display = 'none';
-        document.getElementById('user-box').style.display = 'block';
+        document.getElementById('authForms').style.display = 'none';
+        document.getElementById('userInfo').style.display = 'block';
         const name = user.user_metadata?.full_name || user.email;
-        document.getElementById('user-name').innerText = "👤 " + name;
+        document.getElementById('userNameText').innerText = "Xoş gəldiniz, " + name;
+        document.getElementById('cabinetText').innerText = "Profil";
       }
     }
 
@@ -496,43 +563,63 @@
       const { data, error } = await _supabase.from('announcements').select('*').order('id', { ascending: false });
 
       if (error) return console.error(error);
+      allData = data || [];
+      renderList(allData, user);
+    }
 
+    function renderList(items, user) {
       const list = document.getElementById('list');
       list.innerHTML = '';
 
-      if (data.length === 0) {
-        list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">Hələ heç bir elan yoxdur.</div>';
+      if (items.length === 0) {
+        list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">Heç bir elan tapılmadı.</div>';
         return;
       }
 
-      data.forEach(item => {
+      items.forEach(item => {
         const isOwner = user && user.id === item.user_id;
-        const owner = item.full_name || item.owner_name || 'İstifadəçi';
 
         list.innerHTML += `
           <div class="card">
             <div class="card-img-wrapper">
-              <span class="card-category">${item.category}</span>
-              ${item.image_url ? `<img src="${item.image_url}" class="card-img">` : '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#94a3b8;">Şəkil yoxdur</div>'}
+              ${item.image_url ? `<img src="${item.image_url}" class="card-img">` : '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#94a3b8;font-size:0.8rem;">Şəkil yoxdur</div>'}
             </div>
             <div class="card-body">
-              <div class="card-price">${item.price} AZN</div>
-              <h3 class="card-title">${item.title}</h3>
-              <p class="card-desc">${item.description || ''}</p>
+              <div class="card-price">${item.price} <span>AZN</span></div>
+              <div class="card-title">${item.title}</div>
               <div class="card-footer">
-                <div><strong>Satıcı:</strong> ${owner}</div>
-                <div><strong>Əlaqə:</strong> ${item.phone}</div>
+                <div>Bakı, Bu gün</div>
               </div>
-              ${isOwner ? `<button onclick="deleteItem('${item.id}')" class="btn btn-danger" style="margin-top:12px;">Elanı Sil</button>` : ''}
+              ${isOwner ? `<button onclick="deleteItem('${item.id}')" class="btn-delete">Sil</button>` : ''}
             </div>
           </div>
         `;
       });
     }
 
+    function filterAnnouncements() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = allData.filter(item => item.title.toLowerCase().includes(query));
+      _supabase.auth.getUser().then(({ data: { user } }) => renderList(filtered, user));
+    }
+
+    function filterByCategory(cat) {
+      if (cat === 'Bütün') {
+        _supabase.auth.getUser().then(({ data: { user } }) => renderList(allData, user));
+      } else {
+        const filtered = allData.filter(item => item.category === cat);
+        _supabase.auth.getUser().then(({ data: { user } }) => renderList(filtered, user));
+      }
+    }
+
     async function addAnnouncement() {
       const { data: { user } } = await _supabase.auth.getUser();
-      if (!user) return alert("Əvvəlcə daxil olun!");
+      if (!user) {
+        alert("Əvvəlcə daxil olun!");
+        closeModal('addModal');
+        openAuthModal();
+        return;
+      }
 
       const title = document.getElementById('title').value;
       const price = document.getElementById('price').value;
@@ -554,24 +641,4 @@
         image_url = urlData.publicUrl;
       }
 
-      const name = user.user_metadata?.full_name || user.email;
-
-      const { error } = await _supabase.from('announcements').insert([{
-        title, price, phone, category, description, image_url, user_id: user.id, full_name: name, owner_name: name
-      }]);
-
-      if (error) alert("Elan xətası: " + error.message);
-      else location.reload();
-    }
-
-    async function deleteItem(id) {
-      if (!confirm("Silməyə əminsiniz?")) return;
-      await _supabase.from('announcements').delete().eq('id', id);
-      location.reload();
-    }
-
-    checkUser();
-    loadAnnouncements();
-  </script>
-</body>
-</html>
+     
