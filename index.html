@@ -569,6 +569,13 @@
   <div id="toast-container"></div>
 
   <script>
+    window.addEventListener('error', function(e) {
+      const banner = document.createElement('div');
+      banner.style.cssText = 'background:#E4483A;color:#fff;padding:14px;border-radius:12px;margin:14px;font-family:sans-serif;font-weight:600;font-size:0.85rem;';
+      banner.textContent = 'Xəta: ' + e.message + ' (sətir ' + e.lineno + ')';
+      document.body.insertAdjacentElement('afterbegin', banner);
+    });
+
     if (typeof supabase === 'undefined') {
       document.body.insertAdjacentHTML('afterbegin',
         '<div style="background:#E4483A;color:#fff;padding:14px;border-radius:12px;margin:14px 0;font-family:sans-serif;font-weight:600;">' +
@@ -632,13 +639,4 @@
       const sortBy = document.getElementById('sort-select').value;
 
       let filtered = allAnnouncements.filter(item => {
-        const matchesCategory = activeCategory === 'Hamısı' || item.category === activeCategory;
-        const matchesQuery = !query || item.title.toLowerCase().includes(query);
-        return matchesCategory && matchesQuery;
-      });
-
-      if (sortBy === 'price-asc') {
-        filtered = filtered.slice().sort((a, b) => a.price - b.price);
-      } else if (sortBy === 'price-desc') {
-        filtered = filtered.slice().sort((a, b) => b.price - a.price);
-      } else if (allA
+        const matchesCategory = activeCategory === 'Hamısı' 
