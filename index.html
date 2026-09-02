@@ -89,7 +89,7 @@
         grid-template-columns: 1fr;
       }
       .sidebar {
-        display: none; /* Mobil versiyada sol panel gizlənir, alt düymələrlə idarə olunur */
+        display: none;
       }
       .sidebar.active-mobile {
         display: block;
@@ -112,7 +112,6 @@
       color: var(--text);
     }
 
-    /* Tab Stilinin Hazırlanması */
     .tab-buttons {
       display: flex;
       background: #f1f5f9;
@@ -329,7 +328,6 @@
       margin-bottom: 12px;
     }
 
-    /* Alt Naviqasiya Paneli (Bottom Navigation) */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -371,7 +369,6 @@
       fill: currentColor;
     }
 
-    /* Ortadakı Əlavə Et Düyməsi */
     .nav-add-btn-wrapper {
       position: relative;
       top: -16px;
@@ -391,7 +388,6 @@
       cursor: pointer;
     }
 
-    /* Modal Pencərə Sistemi */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -456,17 +452,14 @@
 
   <div class="container">
     
-    <!-- Sidebar Panel (Masaüstü üçün) -->
     <div class="sidebar" id="mainSidebar">
       
-      <!-- Ayrılmış Giriş və Qeydiyyat Paneli -->
       <div class="panel" id="auth-box">
         <div class="tab-buttons">
           <button class="tab-btn active" onclick="switchTab('login')">Giriş</button>
           <button class="tab-btn" onclick="switchTab('register')">Qeydiyyat</button>
         </div>
 
-        <!-- Giriş Formu -->
         <div class="tab-content active" id="login-tab">
           <div class="form-group">
             <label>E-poçt Ünvanı</label>
@@ -479,7 +472,6 @@
           <button onclick="signIn()" class="btn btn-primary">Daxil Ol</button>
         </div>
 
-        <!-- Qeydiyyat Formu -->
         <div class="tab-content" id="register-tab">
           <div class="form-group">
             <label>Ad və Soyad</label>
@@ -497,13 +489,11 @@
         </div>
       </div>
 
-      <!-- Daxil Olmuş İstifadəçi Paneli -->
       <div class="panel" id="user-box" style="display: none;">
         <div class="user-badge" id="user-name">👤 Xoş gəldiniz</div>
         <button onclick="signOut()" class="btn btn-danger">Hesabdan Çıx</button>
       </div>
 
-      <!-- Elan Əlavə Etmə Paneli -->
       <div class="panel" id="add-panel">
         <h3 class="panel-title">Yeni Elan Yerləşdir</h3>
         <div class="form-group">
@@ -540,7 +530,6 @@
 
     </div>
 
-    <!-- Elanlar Siyahısı -->
     <div class="content">
       <div class="section-header">
         <h2 class="section-title">Son Elanlar</h2>
@@ -550,7 +539,6 @@
 
   </div>
 
-  <!-- Alt Naviqasiya Paneli -->
   <nav class="bottom-nav">
     <button class="nav-item active" onclick="scrollToTop()">
       <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
@@ -575,7 +563,6 @@
     </button>
   </nav>
 
-  <!-- Mobil Modal: Yeni Elan -->
   <div class="modal-overlay" id="addModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -615,7 +602,6 @@
     </div>
   </div>
 
-  <!-- Mobil Modal: Giriş / Kabinet -->
   <div class="modal-overlay" id="authModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -661,7 +647,6 @@
     </div>
   </div>
 
-  <!-- Mobil Modal: Bəyəndiklərim -->
   <div class="modal-overlay" id="favModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -672,7 +657,6 @@
     </div>
   </div>
 
-  <!-- Mobil Modal: Mesajlar -->
   <div class="modal-overlay" id="msgModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -700,11 +684,25 @@
       document.getElementById(id).classList.remove('active');
     }
 
-    // Tab dəyişdirmə funksiyası (Masaüstü)
     function switchTab(tabName) {
       document.querySelectorAll('#auth-box .tab-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('#auth-box .tab-content').forEach(content => content.classList.remove('active'));
 
       if (tabName === 'login') {
         document.querySelectorAll('#auth-box .tab-btn')[0].classList.add('active');
-        document.getElementById('login-tab
+        document.getElementById('login-tab').classList.add('active');
+      } else {
+        document.querySelectorAll('#auth-box .tab-btn')[1].classList.add('active');
+        document.getElementById('register-tab').classList.add('active');
+      }
+    }
+
+    function switchTabMobile(tabName) {
+      document.querySelectorAll('#m-auth-box .tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('#m-auth-box .tab-content').forEach(content => content.classList.remove('active'));
+
+      if (tabName === 'login') {
+        document.querySelectorAll('#m-auth-box .tab-btn')[0].classList.add('active');
+        document.getElementById('m-login-tab').classList.add('active');
+      } else {
+        document.querySelectorAll(
