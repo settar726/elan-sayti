@@ -60,26 +60,30 @@
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     async function loadAnnouncements() {
-      const { data, error } = await _supabase.from('announcements').select('*').order('created_at', { ascending: false });
-      if (error) return console.error(error);
-      
-      const list = document.getElementById('announcements-list');
-      list.innerHTML = '';
-      data.forEach(item => {
-        list.innerHTML += `
-          <div class="card">
-            ${item.image_url ? `<img src="${item.image_url}">` : ''}
-            <h3>${item.title}</h3>
-            <p class="price">${item.price} AZN</p>
-            <p><strong>Kateqoriya:</strong> ${item.category}</p>
-            <p>${item.description || ''}</p>
-            <p><strong>Əlaqə:</strong> ${item.phone}</p>
-          <button onclick="deleteAnnouncement(${item.id})" style="background-color: #ff4d4d; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-top: 8px;">Elanı Sil</button>
-          
-          </div>
+    const { data: { user } } = await _supabase.auth.getUser();
+    const { data, error } = await _supabase.from('announcements').select('*');
+    if (error) return console.error(error);
+
+    const container = document.getElementById('announcements');
+    container.innerHTML = '';
+
+    data.forEach(item => {
+        const isOwner = user && user.id === item.user_id;
+        container.innerHTML += `
+            <div class="card">
+                ${item.image_url ? `<img src="${item.image_url}">` : ''}
+                <h3>${item.title}</h3>
+                <p class="price">${item.price} AZN</p>
+                <p><strong>Kateqoriya:</strong> ${item.category}</p>
+                <p>${item.description || ''}</p>
+                <p><strong>Əlaqə:</strong> ${item.phone}</p>
+                ${isOwner ? `<button onclick="deleteAnnouncement('${item.id}')" style="background: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Elanı Sil</button>` : ''}
+            </div>
         `;
-      });
+    });
     }
+    
+    
 
     async function addAnnouncement() {
           const { data: { user } } = await _supabase.auth.getUser();
