@@ -117,7 +117,7 @@
           const { error } = await _supabase.from('announcements').insert([{ title, price, phone, category, description, image_url, user_id: user.id }]);
 
       if (error) {
-        alert('Elan əlavə edilmədi!');
+       alert('Elan xətası: ' + error.message);
       } else {
         alert('Elan uğurla əlavə olundu!');
         location.reload();
