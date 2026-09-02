@@ -4,505 +4,46 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Elan Saytı</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23FF6B35'/%3E%3Ctext x='50' y='68' font-size='58' font-family='Arial' font-weight='800' fill='white' text-anchor='middle'%3EE%3C/text%3E%3C/svg%3E">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --cream: #FFF7EC;
-      --ink: #24211E;
-      --tangerine: #FF6B35;
-      --violet: #6C5CE7;
-      --emerald: #00A67D;
-      --sunshine: #FFC93C;
-      --sky: #2E9CCA;
-      --card-bg: #FFFFFF;
-      --line: rgba(36,33,30,0.10);
-      --radius: 18px;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      font-family: 'Inter', Arial, sans-serif;
-      margin: 0;
-      padding: 0 14px 40px;
-      background:
-        radial-gradient(circle at 8% 0%, rgba(255,201,60,0.35), transparent 40%),
-        radial-gradient(circle at 92% 10%, rgba(108,92,231,0.18), transparent 45%),
-        var(--cream);
-      color: var(--ink);
-    }
-
-    /* ---------- Hero ---------- */
-    .hero {
-      padding: 28px 4px 18px;
-      text-align: left;
-    }
-    .hero .eyebrow-dot {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--violet);
-      margin-bottom: 6px;
-    }
-    .hero .eyebrow-dot::before {
-      content: "";
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: var(--tangerine);
-      display: inline-block;
-    }
-    h1 {
-      font-family: 'Baloo 2', sans-serif;
-      font-weight: 800;
-      font-size: 2.5rem;
-      line-height: 1.05;
-      margin: 0;
-      color: var(--ink);
-    }
-    h1 span { color: var(--tangerine); }
-    .hero p.tag {
-      margin: 8px 0 0;
-      font-size: 1rem;
-      color: #55504A;
-      max-width: 34ch;
-    }
-
-    /* ---------- Auth card ---------- */
-    .auth-card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      padding: 18px;
-      margin: 18px 0;
-      border: 1px solid var(--line);
-      box-shadow: 0 10px 24px rgba(36,33,30,0.06);
-    }
-    .field {
-      width: 100%;
-      padding: 12px 14px;
-      margin: 0 0 10px;
-      border: 1.5px solid var(--line);
-      border-radius: 12px;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.95rem;
-      background: #FCFAF6;
-    }
-    .field:focus {
-      outline: none;
-      border-color: var(--violet);
-      background: #fff;
-    }
-    .btn {
-      display: inline-block;
-      width: 100%;
-      padding: 12px 16px;
-      border: none;
-      border-radius: 12px;
-      font-family: 'Inter', sans-serif;
-      font-weight: 700;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: transform 0.12s ease, box-shadow 0.12s ease;
-    }
-    .btn:active { transform: scale(0.98); }
-    .btn-primary { background: var(--tangerine); color: #fff; box-shadow: 0 6px 14px rgba(255,107,53,0.30); }
-    .btn-secondary { background: var(--violet); color: #fff; box-shadow: 0 6px 14px rgba(108,92,231,0.28); }
-    .btn-danger { background: #fff; color: #E4483A; border: 1.5px solid #F3B3AC; box-shadow: none; }
-    .btn-danger:hover { background: #FFF1EF; }
-
-    .tab-row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 16px;
-      background: #F4EFE6;
-      padding: 5px;
-      border-radius: 12px;
-    }
-    .tab-btn {
-      flex: 1;
-      border: none;
-      background: transparent;
-      padding: 10px 12px;
-      border-radius: 9px;
-      font-family: 'Inter', sans-serif;
-      font-weight: 700;
-      font-size: 0.92rem;
-      color: #8A8578;
-      cursor: pointer;
-      transition: background 0.15s ease, color 0.15s ease;
-    }
-    .tab-btn.active {
-      background: #fff;
-      color: var(--ink);
-      box-shadow: 0 4px 10px rgba(36,33,30,0.10);
-    }
-
-    .remember-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.88rem;
-      color: #55504A;
-      margin: 2px 0 12px;
-      cursor: pointer;
-    }
-    .remember-row input[type="checkbox"] {
-      width: 17px;
-      height: 17px;
-      accent-color: var(--violet);
-      cursor: pointer;
-    }
-
-    #user-info p {
-      font-weight: 700;
-      margin: 0 0 12px;
-      color: var(--ink);
-    }
-    #user-info p::before {
-      content: "👋 ";
-    }
-
-    /* ---------- New listing form ---------- */
-    .form-container {
-      background: var(--card-bg);
-      padding: 20px;
-      border-radius: var(--radius);
-      margin: 0 0 26px;
-      border: 1px solid var(--line);
-      box-shadow: 0 10px 24px rgba(36,33,30,0.06);
-      position: relative;
-      overflow: hidden;
-    }
-    .form-container::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 6px;
-      background: linear-gradient(90deg, var(--tangerine), var(--sunshine), var(--violet), var(--sky));
-    }
-    .form-container h3 {
-      font-family: 'Baloo 2', sans-serif;
-      font-size: 1.3rem;
-      margin: 8px 0 14px;
-    }
-    input, textarea, select {
-      width: 100%;
-      padding: 12px 14px;
-      margin: 0 0 10px;
-      border: 1.5px solid var(--line);
-      border-radius: 12px;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.95rem;
-      background: #FCFAF6;
-    }
-    input:focus, textarea:focus, select:focus {
-      outline: none;
-      border-color: var(--tangerine);
-      background: #fff;
-    }
-    textarea { min-height: 90px; resize: vertical; }
-    select { -webkit-appearance: none; appearance: none; }
-    input[type="file"] {
-      background: #FCFAF6;
-      padding: 10px 12px;
-    }
-    .form-container button {
-      width: 100%;
-      padding: 13px 16px;
-      border: none;
-      border-radius: 12px;
-      background: var(--emerald);
-      color: #fff;
-      font-family: 'Inter', sans-serif;
-      font-weight: 700;
-      font-size: 1rem;
-      cursor: pointer;
-      box-shadow: 0 8px 18px rgba(0,166,125,0.30);
-      margin-top: 4px;
-    }
-
-    /* ---------- Listings ---------- */
-    h2.section-title {
-      font-family: 'Baloo 2', sans-serif;
-      font-size: 1.5rem;
-      margin: 6px 0 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    h2.section-title::after {
-      content: "";
-      flex: 1;
-      height: 2px;
-      background: repeating-linear-gradient(90deg, var(--line) 0 6px, transparent 6px 12px);
-    }
-
-    .announcements {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 16px;
-    }
-    .card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      padding: 0 0 14px;
-      border: 1px solid var(--line);
-      box-shadow: 0 8px 20px rgba(36,33,30,0.07);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-    .card img {
-      width: 100%;
-      height: 170px;
-      object-fit: cover;
-      display: block;
-    }
-    .card .card-body { padding: 14px 16px 0; }
-    .card h3 {
-      font-family: 'Baloo 2', sans-serif;
-      font-size: 1.1rem;
-      margin: 0 0 6px;
-      line-height: 1.25;
-    }
-    .price {
-      display: block;
-      color: var(--emerald);
-      font-weight: 800;
-      font-size: 1.15rem;
-      margin: 0 0 8px;
-    }
-    .cat-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 999px;
-      margin: 0 0 10px;
-      color: #fff;
-    }
-    .cat-pill.cat-neqliyyat { background: var(--sky); }
-    .cat-pill.cat-emlak { background: var(--violet); }
-    .cat-pill.cat-elektronika { background: var(--tangerine); }
-    .cat-pill.cat-diger { background: #8A8578; }
-
-    .card p.desc {
-      font-size: 0.9rem;
-      color: #55504A;
-      margin: 0 0 10px;
-      line-height: 1.4;
-    }
-    .card p.contact {
-      font-size: 0.88rem;
-      margin: 0 0 6px;
-      color: var(--ink);
-    }
-    .card p.contact strong { color: #8A8578; font-weight: 600; }
-
-    .card button.delete-btn {
-      margin: 10px 16px 0;
-      width: calc(100% - 32px);
-      background: #fff;
-      color: #E4483A;
-      border: 1.5px solid #F3B3AC;
-      padding: 10px 12px;
-      border-radius: 10px;
-      font-family: 'Inter', sans-serif;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .empty-state {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 40px 16px;
-      color: #8A8578;
-      font-size: 0.95rem;
-    }
-
-    /* ---------- Search & filter bar ---------- */
-    .filter-bar {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin: 0 0 18px;
-    }
-    .search-input {
-      width: 100%;
-      padding: 12px 14px;
-      border: 1.5px solid var(--line);
-      border-radius: 12px;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.95rem;
-      background: #fff;
-    }
-    .chip-row {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 2px;
-    }
-    .chip-row::-webkit-scrollbar { display: none; }
-    .chip {
-      flex: 0 0 auto;
-      padding: 8px 14px;
-      border-radius: 999px;
-      border: 1.5px solid var(--line);
-      background: #fff;
-      font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      font-size: 0.85rem;
-      color: var(--ink);
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    .chip.active {
-      background: var(--ink);
-      border-color: var(--ink);
-      color: #fff;
-    }
-    .sort-select {
-      padding: 10px 12px;
-      border: 1.5px solid var(--line);
-      border-radius: 12px;
-      background: #fff;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.88rem;
-      color: var(--ink);
-      align-self: flex-start;
-    }
-
-    /* ---------- Skeleton loading ---------- */
-    .skeleton-card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      border: 1px solid var(--line);
-      overflow: hidden;
-    }
-    .skeleton-img, .skeleton-line {
-      background: linear-gradient(90deg, #EFEAE0 25%, #F7F3EC 37%, #EFEAE0 63%);
-      background-size: 400% 100%;
-      animation: skeleton-shine 1.4s ease infinite;
-    }
-    .skeleton-img { height: 170px; }
-    .skeleton-line {
-      height: 12px;
-      margin: 14px 16px;
-      border-radius: 6px;
-    }
-    .skeleton-line.w-60 { width: 60%; }
-    .skeleton-line.w-40 { width: 40%; }
-    @keyframes skeleton-shine {
-      0% { background-position: 100% 0; }
-      100% { background-position: -100% 0; }
-    }
-
-    /* ---------- Toast ---------- */
-    #toast-container {
-      position: fixed;
-      bottom: 18px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 999;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      width: calc(100% - 28px);
-      max-width: 420px;
-      align-items: center;
-      pointer-events: none;
-    }
-    .toast {
-      pointer-events: auto;
-      background: var(--ink);
-      color: #fff;
-      padding: 12px 18px;
-      border-radius: 12px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      box-shadow: 0 10px 24px rgba(0,0,0,0.25);
-      opacity: 0;
-      transform: translateY(10px);
-      animation: toast-in 0.25s ease forwards, toast-out 0.25s ease forwards 2.6s;
-      text-align: center;
-    }
-    .toast.success { background: var(--emerald); }
-    .toast.error { background: #E4483A; }
-    @keyframes toast-in {
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes toast-out {
-      to { opacity: 0; transform: translateY(10px); }
-    }
-
-    footer {
-      margin-top: 40px;
-      padding-top: 22px;
-      border-top: 1px solid var(--line);
-      text-align: center;
-      color: #8A8578;
-      font-size: 0.85rem;
-    }
-    footer .foot-title {
-      font-family: 'Baloo 2', sans-serif;
-      font-size: 1.1rem;
-      color: var(--ink);
-      margin-bottom: 4px;
-    }
-    footer a { color: var(--violet); text-decoration: none; font-weight: 600; }
+    body { font-family: sans-serif; background: #f8fafc; margin: 0; padding: 15px; color: #1e293b; }
+    h1, h2, h3 { text-align: center; }
+    .box { background: #fff; padding: 20px; border-radius: 12px; max-width: 450px; margin: 0 auto 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    input, select, textarea, button { width: 100%; padding: 12px; margin: 6px 0 12px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
+    button { background: #2563eb; color: #fff; font-weight: bold; border: none; cursor: pointer; }
+    button.red { background: #dc2626; }
+    button.green { background: #16a34a; }
+    .announcements { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; max-width: 900px; margin: 0 auto; }
+    .card { background: #fff; border-radius: 12px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    .card img { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; }
+    .price { font-size: 1.2em; font-weight: bold; color: #16a34a; }
   </style>
 </head>
 <body>
 
-  <div class="hero">
-    <div class="eyebrow-dot">Bazar açıqdır</div>
-    <h1>Elan <span>Saytı</span></h1>
-    <p class="tag">Al, sat, elan yerləşdir — hamısı bir yerdə.</p>
+  <h1>Elan Saytı</h1>
+
+  <!-- Giriş və Qeydiyyat -->
+  <div class="box" id="auth-box">
+    <h3>Giriş / Qeydiyyat</h3>
+    <input type="text" id="fullname" placeholder="Ad və Soyadınız">
+    <input type="email" id="email" placeholder="E-poçt ünvanı">
+    <input type="password" id="password" placeholder="Şifrə">
+    <button onclick="signUp()" class="green">Qeydiyyatdan Keç</button>
+    <button onclick="signIn()">Giriş Et</button>
   </div>
 
-  <div id="auth-container" class="auth-card">
-    <div id="auth-inputs">
-        <div class="tab-row">
-          <button type="button" id="tab-login-btn" class="tab-btn active" onclick="showTab('login')">Giriş</button>
-          <button type="button" id="tab-signup-btn" class="tab-btn" onclick="showTab('signup')">Qeydiyyat</button>
-        </div>
-
-        <form id="login-form" onsubmit="event.preventDefault(); signIn();">
-          <input type="email" id="login-email" name="email" class="field" placeholder="E-poçt ünvanı" required autocomplete="username">
-          <input type="password" id="login-password" name="password" class="field" placeholder="Şifrə" required autocomplete="current-password">
-          <label class="remember-row">
-            <input type="checkbox" id="remember-me" checked>
-            <span>Məni yadda saxla</span>
-          </label>
-          <button type="submit" class="btn btn-primary">Giriş Et</button>
-        </form>
-
-        <form id="signup-form" onsubmit="event.preventDefault(); signUp();" style="display: none;">
-          <input type="text" id="signup-name" name="name" class="field" placeholder="Ad Soyad" required autocomplete="name">
-          <input type="email" id="signup-email" name="email" class="field" placeholder="E-poçt ünvanı" required autocomplete="username">
-          <input type="password" id="signup-password" name="password" class="field" placeholder="Şifrə" required autocomplete="new-password">
-          <button type="submit" class="btn btn-secondary">Qeydiyyatdan Keç</button>
-        </form>
-    </div>
-    <div id="user-info" style="display: none;">
-        <p id="user-email"></p>
-        <button onclick="signOut()" class="btn btn-danger">Çıxış Et</button>
-    </div>
+  <div class="box" id="user-box" style="display: none;">
+    <h3 id="user-name"></h3>
+    <button onclick="signOut()" class="red">Çıxış Et</button>
   </div>
 
-  <div class="form-container">
+  <!-- Elan Əlavə Et -->
+  <div class="box">
     <h3>Yeni Elan Əlavə Et</h3>
-    <input type="text" id="title" placeholder="Elanın başlığı" required>
-    <input type="number" id="price" placeholder="Qiymət (AZN)" required>
-    <input type="tel" id="phone" placeholder="Əlaqə nömrəsi" required>
+    <input type="text" id="title" placeholder="Elan başlığı">
+    <input type="number" id="price" placeholder="Qiymət (AZN)">
+    <input type="tel" id="phone" placeholder="Əlaqə nömrəsi">
     <select id="category">
       <option value="Nəqliyyat">Nəqliyyat</option>
       <option value="Daşınmaz Əmlak">Daşınmaz Əmlak</option>
@@ -511,127 +52,126 @@
     </select>
     <textarea id="description" placeholder="Ətraflı məlumat"></textarea>
     <input type="file" id="image" accept="image/*">
-    <button onclick="addAnnouncement()">Elanı Yerləşdir</button>
+    <button onclick="addAnnouncement()" class="green">Elanı Yerləşdir</button>
   </div>
 
-  <h2 class="section-title">Son Elanlar</h2>
-
-  <div class="filter-bar">
-    <input type="text" id="search-input" class="search-input" placeholder="Elan axtar..." oninput="applyFilters()">
-    <div class="chip-row" id="category-chips">
-      <button class="chip active" data-cat="Hamısı" onclick="setCategory('Hamısı')">Hamısı</button>
-      <button class="chip" data-cat="Nəqliyyat" onclick="setCategory('Nəqliyyat')">Nəqliyyat</button>
-      <button class="chip" data-cat="Daşınmaz Əmlak" onclick="setCategory('Daşınmaz Əmlak')">Daşınmaz Əmlak</button>
-      <button class="chip" data-cat="Elektronika" onclick="setCategory('Elektronika')">Elektronika</button>
-      <button class="chip" data-cat="Digər" onclick="setCategory('Digər')">Digər</button>
-    </div>
-    <select id="sort-select" class="sort-select" onchange="applyFilters()">
-      <option value="newest">Ən yeni</option>
-      <option value="price-asc">Qiymət: ucuzdan bahaya</option>
-      <option value="price-desc">Qiymət: bahadan ucuza</option>
-    </select>
-  </div>
-
-  <div class="announcements" id="announcements-list"></div>
-
-  <footer>
-    <div class="foot-title">Elan Saytı</div>
-    <p>Al, sat, elan yerləşdir — hamısı bir yerdə.</p>
-    <p>Sualların var? <a href="mailto:info@elansayti.az">info@elansayti.az</a></p>
-  </footer>
-
-  <div id="toast-container"></div>
+  <h2>Elanlar</h2>
+  <div class="announcements" id="list"></div>
 
   <script>
     const SUPABASE_URL = "https://sqtiawgpiyevphybilen.supabase.co";
     const SUPABASE_KEY = "sb_publishable_qLFPLKZe80duJ7zYssQJXg_1lu_lsMV";
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let allAnnouncements = [];
-    let currentUser = null;
-    let activeCategory = 'Hamısı';
+    async function signUp() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const fullName = document.getElementById('fullname').value;
 
-    function showToast(message, type = 'default') {
-      const container = document.getElementById('toast-container');
-      const toast = document.createElement('div');
-      toast.className = 'toast' + (type !== 'default' ? ' ' + type : '');
-      toast.textContent = message;
-      container.appendChild(toast);
-      setTimeout(() => toast.remove(), 2900);
+      if (!email || !password || !fullName) return alert("Bütün xanaları doldurun!");
+
+      const { error } = await _supabase.auth.signUp({
+        email, password, options: { data: { full_name: fullName } }
+      });
+
+      if (error) alert("Xəta: " + error.message);
+      else alert("Qeydiyyat tamamlandı! İndi 'Giriş Et' düyməsini sıxın.");
     }
 
-    function categoryClass(cat) {
-      switch (cat) {
-        case 'Nəqliyyat': return 'cat-neqliyyat';
-        case 'Daşınmaz Əmlak': return 'cat-emlak';
-        case 'Elektronika': return 'cat-elektronika';
-        default: return 'cat-diger';
+    async function signIn() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      const { error } = await _supabase.auth.signInWithPassword({ email, password });
+      if (error) alert("Giriş xətası: " + error.message);
+      else location.reload();
+    }
+
+    async function signOut() {
+      await _supabase.auth.signOut();
+      location.reload();
+    }
+
+    async function checkUser() {
+      const { data: { user } } = await _supabase.auth.getUser();
+      if (user) {
+        document.getElementById('auth-box').style.display = 'none';
+        document.getElementById('user-box').style.display = 'block';
+        const name = user.user_metadata?.full_name || user.email;
+        document.getElementById('user-name').innerText = "Xoş gəldiniz, " + name;
       }
     }
 
-    function renderSkeleton() {
-      const container = document.getElementById('announcements-list');
-      let html = '';
-      for (let i = 0; i < 4; i++) {
-        html += `
-          <div class="skeleton-card">
-            <div class="skeleton-img"></div>
-            <div class="skeleton-line w-60"></div>
-            <div class="skeleton-line w-40"></div>
+    async function loadAnnouncements() {
+      const { data: { user } } = await _supabase.auth.getUser();
+      const { data, error } = await _supabase.from('announcements').select('*').order('id', { ascending: false });
+
+      if (error) return console.error(error);
+
+      const list = document.getElementById('list');
+      list.innerHTML = '';
+
+      data.forEach(item => {
+        const isOwner = user && user.id === item.user_id;
+        const owner = item.full_name || item.owner_name || 'İstifadəçi';
+
+        list.innerHTML += `
+          <div class="card">
+            ${item.image_url ? `<img src="${item.image_url}">` : ''}
+            <h3>${item.title}</h3>
+            <p class="price">${item.price} AZN</p>
+            <p><b>Kateqoriya:</b> ${item.category}</p>
+            <p>${item.description || ''}</p>
+            <p><b>Əlaqə:</b> ${item.phone}</p>
+            <p><b>Elan sahibi:</b> ${owner}</p>
+            ${isOwner ? `<button onclick="deleteItem('${item.id}')" class="red">Sil</button>` : ''}
           </div>
         `;
-      }
-      container.innerHTML = html;
-    }
-
-    function setCategory(cat) {
-      activeCategory = cat;
-      document.querySelectorAll('#category-chips .chip').forEach(chip => {
-        chip.classList.toggle('active', chip.dataset.cat === cat);
       });
-      applyFilters();
     }
 
-    function applyFilters() {
-      const query = document.getElementById('search-input').value.trim().toLowerCase();
-      const sortBy = document.getElementById('sort-select').value;
+    async function addAnnouncement() {
+      const { data: { user } } = await _supabase.auth.getUser();
+      if (!user) return alert("Əvvəlcə daxil olun!");
 
-      let filtered = allAnnouncements.filter(item => {
-        const matchesCategory = activeCategory === 'Hamısı' || item.category === activeCategory;
-        const matchesQuery = !query || item.title.toLowerCase().includes(query);
-        return matchesCategory && matchesQuery;
-      });
+      const title = document.getElementById('title').value;
+      const price = document.getElementById('price').value;
+      const phone = document.getElementById('phone').value;
+      const category = document.getElementById('category').value;
+      const description = document.getElementById('description').value;
+      const imageFile = document.getElementById('image').files[0];
 
-      if (sortBy === 'price-asc') {
-        filtered = filtered.slice().sort((a, b) => a.price - b.price);
-      } else if (sortBy === 'price-desc') {
-        filtered = filtered.slice().sort((a, b) => b.price - a.price);
-      } else if (allAnnouncements.some(item => item.created_at)) {
-        filtered = filtered.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      if (!title || !price || !phone) return alert("Başlıq, qiymət və nömrə vacibdir!");
+
+      let image_url = '';
+
+      if (imageFile) {
+        const fileName = Date.now() + '_' + imageFile.name;
+        const { error: upErr } = await _supabase.storage.from('announcement-images').upload(fileName, imageFile);
+        if (upErr) return alert("Şəkil xətası: " + upErr.message);
+
+        const { data: urlData } = _supabase.storage.from('announcement-images').getPublicUrl(fileName);
+        image_url = urlData.publicUrl;
       }
 
-      renderAnnouncements(filtered);
+      const name = user.user_metadata?.full_name || user.email;
+
+      const { error } = await _supabase.from('announcements').insert([{
+        title, price, phone, category, description, image_url, user_id: user.id, full_name: name, owner_name: name
+      }]);
+
+      if (error) alert("Elan xətası: " + error.message);
+      else location.reload();
     }
 
-    function renderAnnouncements(items) {
-      const container = document.getElementById('announcements-list');
-      if (!container) return;
+    async function deleteItem(id) {
+      if (!confirm("Silməyə əminsiniz?")) return;
+      await _supabase.from('announcements').delete().eq('id', id);
+      location.reload();
+    }
 
-      if (!items || items.length === 0) {
-        container.innerHTML = '<div class="empty-state">Uyğun elan tapılmadı.</div>';
-        return;
-      }
-
-      container.innerHTML = items.map(item => {
-        const isOwner = currentUser && currentUser.id === item.user_id;
-        const ownerName = item.full_name || item.owner_name || 'İstifadəçi';
-        return `
-            <div class="card">
-                ${item.image_url ? `<img src="${item.image_url}" loading="lazy">` : ''}
-                <div class="card-body">
-                  <h3>${item.title}</h3>
-                  <span class="price">${item.price} AZN</span>
-                  <span class="cat-pill ${categoryClass(item.category)}">${item.category}</span>
-                  <p class="desc">${item.description || ''}</p>
-                  <p class="contact"><strong>Elan sahibi:</strong> ${ownerName}</p>
-                  <p class="con
+    checkUser();
+    loadAnnouncements();
+  </script>
+</body>
+</html>
