@@ -120,6 +120,49 @@
         location.reload();
     }
   }
-  </script>
+    
+  
+  // Qeydiyyat funksiyası
+async function signUp() {
+    const email = document.getElementById('auth-email').value;
+    const password = document.getElementById('auth-password').value;
+    if (!email || !password) return alert('E-poçt və şifrəni daxil edin!');
+    
+    const { error } = await _supabase.auth.signUp({ email, password });
+    if (error) alert("Qeydiyyat xətası: " + error.message);
+    else alert("Qeydiyyat uğurludur! Giriş edə bilərsiniz.");
+}
+
+// Giriş funksiyası
+async function signIn() {
+    const email = document.getElementById('auth-email').value;
+    const password = document.getElementById('auth-password').value;
+    if (!email || !password) return alert('E-poçt və şifrəni daxil edin!');
+
+    const { error } = await _supabase.auth.signInWithPassword({ email, password });
+    if (error) alert("Giriş xətası: " + error.message);
+    else {
+        alert("Giriş edildi!");
+        location.reload();
+    }
+}
+
+// Çıxış funksiyası
+async function signOut() {
+    await _supabase.auth.signOut();
+    location.reload();
+}
+
+// İstifadəçini yoxlamaq
+async function checkUser() {
+    const { data: { user } } = await _supabase.auth.getUser();
+    if (user) {
+        document.getElementById('auth-inputs').style.display = 'none';
+        document.getElementById('user-info').style.display = 'block';
+        document.getElementById('user-email').innerText = "Hesab: " + user.email;
+    }
+}
+checkUser();
+</script>
 </body>
 </html>
