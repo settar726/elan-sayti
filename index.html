@@ -102,16 +102,17 @@
 
       let image_url = '';
 
-      if (imageFile) {
-        const fileName = Date.now() + '_' + imageFile.name;
-        const { data, error } = await _supabase.storage.from('announcement-images').upload(fileName, imageFile);
-        if (error) {
-          alert('Şəkil yüklənərkən xəta oldu!');
-          return;
-        }
-        const { data: publicUrlData } = _supabase.storage.from('announcement-images').getPublicUrl(fileName);
-        image_url = publicUrlData.publicUrl;
+          if (imageFile) {
+      const fileName = Date.now() + '_' + imageFile.name;
+      const { data, error } = await _supabase.storage.from('announcement-images').upload(fileName, imageFile);
+      if (error) {
+        alert('Şəkil yüklənərkən xəta oldu!');
+        return;
       }
+      const { data: publicUrlData } = _supabase.storage.from('announcement-images').getPublicUrl(fileName);
+      image_url = publicUrlData.publicUrl;
+          }
+      
 
           const { error } = await _supabase.from('announcements').insert([{ title, price, phone, category, description, image_url, user_id: user.id }]);
 
