@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Elan Saytı</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23FF6B35'/%3E%3Ctext x='50' y='68' font-size='58' font-family='Arial' font-weight='800' fill='white' text-anchor='middle'%3EE%3C/text%3E%3C/svg%3E">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -336,8 +337,144 @@
       font-size: 0.95rem;
     }
 
+    /* ---------- Search & filter bar ---------- */
+    .filter-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 0 0 18px;
+    }
+    .search-input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      background: #fff;
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: var(--tangerine);
+    }
+    .chip-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+    .chip-row::-webkit-scrollbar { display: none; }
+    .chip {
+      flex: 0 0 auto;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1.5px solid var(--line);
+      background: #fff;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--ink);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .chip.active {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: #fff;
+    }
+    .sort-select {
+      padding: 10px 12px;
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      color: var(--ink);
+      align-self: flex-start;
+    }
+
+    /* ---------- Skeleton loading ---------- */
+    .skeleton-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+    .skeleton-img, .skeleton-line {
+      background: linear-gradient(90deg, #EFEAE0 25%, #F7F3EC 37%, #EFEAE0 63%);
+      background-size: 400% 100%;
+      animation: skeleton-shine 1.4s ease infinite;
+    }
+    .skeleton-img { height: 170px; }
+    .skeleton-line {
+      height: 12px;
+      margin: 14px 16px;
+      border-radius: 6px;
+    }
+    .skeleton-line.w-60 { width: 60%; }
+    .skeleton-line.w-40 { width: 40%; }
+    @keyframes skeleton-shine {
+      0% { background-position: 100% 0; }
+      100% { background-position: -100% 0; }
+    }
+
+    /* ---------- Toast ---------- */
+    #toast-container {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: calc(100% - 28px);
+      max-width: 420px;
+      align-items: center;
+    }
+    .toast {
+      background: var(--ink);
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+      opacity: 0;
+      transform: translateY(10px);
+      animation: toast-in 0.25s ease forwards, toast-out 0.25s ease forwards 2.6s;
+      text-align: center;
+    }
+    .toast.success { background: var(--emerald); }
+    .toast.error { background: #E4483A; }
+    @keyframes toast-in {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes toast-out {
+      to { opacity: 0; transform: translateY(10px); }
+    }
+
+    /* ---------- Footer ---------- */
+    footer {
+      margin-top: 40px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line);
+      text-align: center;
+      color: #8A8578;
+      font-size: 0.85rem;
+    }
+    footer .foot-title {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 1.1rem;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+    footer a { color: var(--violet); text-decoration: none; font-weight: 600; }
+
     @media (prefers-reduced-motion: reduce) {
       .btn, .card, .form-container button { transition: none; }
+      .skeleton-img, .skeleton-line { animation: none; }
+      .toast { animation: none; opacity: 1; transform: none; }
     }
 
     :focus-visible {
@@ -402,12 +539,50 @@
   </div>
 
   <h2 class="section-title">Son Elanlar</h2>
+
+  <div class="filter-bar">
+    <input type="text" id="search-input" class="search-input" placeholder="Elan axtar..." oninput="applyFilters()">
+    <div class="chip-row" id="category-chips">
+      <button class="chip active" data-cat="Hamısı" onclick="setCategory('Hamısı')">Hamısı</button>
+      <button class="chip" data-cat="Nəqliyyat" onclick="setCategory('Nəqliyyat')">Nəqliyyat</button>
+      <button class="chip" data-cat="Daşınmaz Əmlak" onclick="setCategory('Daşınmaz Əmlak')">Daşınmaz Əmlak</button>
+      <button class="chip" data-cat="Elektronika" onclick="setCategory('Elektronika')">Elektronika</button>
+      <button class="chip" data-cat="Digər" onclick="setCategory('Digər')">Digər</button>
+    </div>
+    <select id="sort-select" class="sort-select" onchange="applyFilters()">
+      <option value="newest">Ən yeni</option>
+      <option value="price-asc">Qiymət: ucuzdan bahaya</option>
+      <option value="price-desc">Qiymət: bahadan ucuza</option>
+    </select>
+  </div>
+
   <div class="announcements" id="announcements-list"></div>
+
+  <footer>
+    <div class="foot-title">Elan Saytı</div>
+    <p>Al, sat, elan yerləşdir — hamısı bir yerdə.</p>
+    <p>Sualların var? <a href="mailto:info@elansayti.az">info@elansayti.az</a></p>
+  </footer>
+
+  <div id="toast-container"></div>
 
   <script>
     const SUPABASE_URL = "https://sqtiawgpiyevphybilen.supabase.co";
     const SUPABASE_KEY = "sb_publishable_qLFPLKZe80duJ7zYssQJXg_1lu_lsMV";
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let allAnnouncements = [];
+    let currentUser = null;
+    let activeCategory = 'Hamısı';
+
+    function showToast(message, type = 'default') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast' + (type !== 'default' ? ' ' + type : '');
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 2900);
+    }
 
     function categoryClass(cat) {
       switch (cat) {
@@ -418,179 +593,58 @@
       }
     }
 
-    async function loadAnnouncements() {
-      const { data: { user } } = await _supabase.auth.getUser();
-      const { data, error } = await _supabase.from('announcements').select('*');
-      if (error) return console.error(error);
+    function renderSkeleton() {
+      const container = document.getElementById('announcements-list');
+      let html = '';
+      for (let i = 0; i < 4; i++) {
+        html += `
+          <div class="skeleton-card">
+            <div class="skeleton-img"></div>
+            <div class="skeleton-line w-60"></div>
+            <div class="skeleton-line w-40"></div>
+          </div>
+        `;
+      }
+      container.innerHTML = html;
+    }
 
+    function setCategory(cat) {
+      activeCategory = cat;
+      document.querySelectorAll('#category-chips .chip').forEach(chip => {
+        chip.classList.toggle('active', chip.dataset.cat === cat);
+      });
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const query = document.getElementById('search-input').value.trim().toLowerCase();
+      const sortBy = document.getElementById('sort-select').value;
+
+      let filtered = allAnnouncements.filter(item => {
+        const matchesCategory = activeCategory === 'Hamısı' || item.category === activeCategory;
+        const matchesQuery = !query || item.title.toLowerCase().includes(query);
+        return matchesCategory && matchesQuery;
+      });
+
+      if (sortBy === 'price-asc') {
+        filtered = filtered.slice().sort((a, b) => a.price - b.price);
+      } else if (sortBy === 'price-desc') {
+        filtered = filtered.slice().sort((a, b) => b.price - a.price);
+      } else if (allAnnouncements.some(item => item.created_at)) {
+        filtered = filtered.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      }
+
+      renderAnnouncements(filtered);
+    }
+
+    function renderAnnouncements(items) {
       const container = document.getElementById('announcements-list');
       if (!container) return;
-      container.innerHTML = '';
 
-      if (!data || data.length === 0) {
-        container.innerHTML = '<div class="empty-state">Hələ elan yoxdur. İlk elanı sən yerləşdir!</div>';
+      if (!items || items.length === 0) {
+        container.innerHTML = '<div class="empty-state">Uyğun elan tapılmadı.</div>';
         return;
       }
 
-      data.forEach(item => {
-        const isOwner = user && user.id === item.user_id;
-        container.innerHTML += `
-            <div class="card">
-                ${item.image_url ? `<img src="${item.image_url}">` : ''}
-                <div class="card-body">
-                  <h3>${item.title}</h3>
-                  <p class="price">${item.price} AZN</p>
-                  <br>
-                  <span class="cat-pill ${categoryClass(item.category)}">${item.category}</span>
-                  <p class="desc">${item.description || ''}</p>
-                  <p class="contact"><strong>Elan sahibi:</strong> ${item.owner_name || 'İstifadəçi'}</p>
-                  <p class="contact"><strong>Əlaqə:</strong> ${item.phone}</p>
-                </div>
-                ${isOwner ? `<button class="delete-btn" onclick="deleteAnnouncement('${item.id}')">Elanı Sil</button>` : ''}
-            </div>
-        `;
-      });
-    }
-
-    async function addAnnouncement() {
-      const { data: { user } } = await _supabase.auth.getUser();
-      if (!user) return alert("Elan yerləşdirmək üçün əvvəlcə daxil olmalısınız!");
-
-      const title = document.getElementById('title').value;
-      const price = document.getElementById('price').value;
-      const phone = document.getElementById('phone').value;
-      const category = document.getElementById('category').value;
-      const description = document.getElementById('description').value;
-      const imageFile = document.getElementById('image').files[0];
-
-      if (!title || !price || !phone) {
-        alert('Lütfən başlığı, qiyməti və nömrəni qeyd edin.');
-        return;
-      }
-
-      let image_url = '';
-
-      if (imageFile) {
-        const fileName = Date.now() + '_' + imageFile.name;
-        const { data, error } = await _supabase.storage.from('announcement-images').upload(fileName, imageFile);
-        if (error) {
-          alert('Şəkil yüklənərkən xəta oldu: ' + error.message);
-          return;
-        }
-        const { data: publicUrlData } = _supabase.storage.from('announcement-images').getPublicUrl(fileName);
-        image_url = publicUrlData.publicUrl;
-      }
-
-      const owner_name = user.user_metadata?.full_name || user.email;
-
-      const { error } = await _supabase.from('announcements').insert([
-        { title, price, phone, category, description, image_url, user_id: user.id, owner_name }
-      ]);
-
-      if (error) {
-        alert('Elan xətası: ' + error.message);
-      } else {
-        alert('Elan uğurla əlavə olundu!');
-        location.reload();
-      }
-    }
-
-    async function deleteAnnouncement(id) {
-      if (!confirm('Bu elanı silməyə əminsiniz?')) return;
-
-      const { error } = await _supabase
-          .from('announcements')
-          .delete()
-          .eq('id', id);
-
-      if (error) {
-          alert('Xəta baş verdi: ' + error.message);
-      } else {
-          alert('Elan uğurla silindi!');
-          location.reload();
-      }
-    }
-
-    function showTab(tab) {
-      const loginForm = document.getElementById('login-form');
-      const signupForm = document.getElementById('signup-form');
-      const loginBtn = document.getElementById('tab-login-btn');
-      const signupBtn = document.getElementById('tab-signup-btn');
-
-      if (tab === 'login') {
-        loginForm.style.display = 'block';
-        signupForm.style.display = 'none';
-        loginBtn.classList.add('active');
-        signupBtn.classList.remove('active');
-      } else {
-        loginForm.style.display = 'none';
-        signupForm.style.display = 'block';
-        loginBtn.classList.remove('active');
-        signupBtn.classList.add('active');
-      }
-    }
-
-    async function signUp() {
-      const name = document.getElementById('signup-name').value;
-      const email = document.getElementById('signup-email').value;
-      const password = document.getElementById('signup-password').value;
-      if (!name || !email || !password) return alert('Ad, e-poçt və şifrəni daxil edin!');
-
-      const { error } = await _supabase.auth.signUp({
-        email,
-        password,
-        options: { data: { full_name: name } }
-      });
-      if (error) alert("Qeydiyyat xətası: " + error.message);
-      else {
-        alert("Qeydiyyat uğurludur! İndi giriş edə bilərsiniz.");
-        showTab('login');
-        document.getElementById('login-email').value = email;
-      }
-    }
-
-    async function signIn() {
-      const email = document.getElementById('login-email').value;
-      const password = document.getElementById('login-password').value;
-      const remember = document.getElementById('remember-me').checked;
-      if (!email || !password) return alert('E-poçt və şifrəni daxil edin!');
-
-      const { error } = await _supabase.auth.signInWithPassword({ email, password });
-      if (error) alert("Giriş xətası: " + error.message);
-      else {
-          if (remember) {
-            localStorage.setItem('remembered_email', email);
-          } else {
-            localStorage.removeItem('remembered_email');
-          }
-          alert("Giriş edildi!");
-          location.reload();
-      }
-    }
-
-    async function signOut() {
-      await _supabase.auth.signOut();
-      location.reload();
-    }
-
-    async function checkUser() {
-      const { data: { user } } = await _supabase.auth.getUser();
-      if (user) {
-          document.getElementById('auth-inputs').style.display = 'none';
-          document.getElementById('user-info').style.display = 'block';
-          const displayName = user.user_metadata?.full_name || user.email;
-          document.getElementById('user-email').innerText = "Salam, " + displayName;
-      } else {
-          const rememberedEmail = localStorage.getItem('remembered_email');
-          if (rememberedEmail) {
-            document.getElementById('login-email').value = rememberedEmail;
-          }
-      }
-    }
-
-    checkUser();
-    loadAnnouncements();
-  </script>
-</body>
-  </html>
-  
+      container.innerHTML = items.map(item => {
+        const isOwner = currentUser && currentU
