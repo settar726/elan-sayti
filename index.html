@@ -83,12 +83,6 @@
       border: 1px solid var(--line);
       box-shadow: 0 10px 24px rgba(36,33,30,0.06);
     }
-    .auth-card h3 {
-      font-family: 'Baloo 2', sans-serif;
-      font-size: 1.15rem;
-      margin: 0 0 12px;
-      color: var(--ink);
-    }
     .field {
       width: 100%;
       padding: 12px 14px;
@@ -117,8 +111,6 @@
       transition: transform 0.12s ease, box-shadow 0.12s ease;
     }
     .btn:active { transform: scale(0.98); }
-    .btn-row { display: flex; gap: 10px; }
-    .btn-row .btn { width: auto; flex: 1; }
     .btn-primary { background: var(--tangerine); color: #fff; box-shadow: 0 6px 14px rgba(255,107,53,0.30); }
     .btn-secondary { background: var(--violet); color: #fff; box-shadow: 0 6px 14px rgba(108,92,231,0.28); }
     .btn-danger { background: #fff; color: #E4483A; border: 1.5px solid #F3B3AC; box-shadow: none; }
@@ -234,7 +226,6 @@
       box-shadow: 0 8px 18px rgba(0,166,125,0.30);
       margin-top: 4px;
     }
-    .form-container button:active { transform: scale(0.99); }
 
     /* ---------- Listings ---------- */
     h2.section-title {
@@ -281,11 +272,11 @@
       line-height: 1.25;
     }
     .price {
-      display: inline-block;
+      display: block;
       color: var(--emerald);
       font-weight: 800;
       font-size: 1.15rem;
-      margin: 0 0 10px;
+      margin: 0 0 8px;
     }
     .cat-pill {
       display: inline-flex;
@@ -311,13 +302,13 @@
     }
     .card p.contact {
       font-size: 0.88rem;
-      margin: 0 0 12px;
+      margin: 0 0 6px;
       color: var(--ink);
     }
     .card p.contact strong { color: #8A8578; font-weight: 600; }
 
     .card button.delete-btn {
-      margin: 0 16px;
+      margin: 10px 16px 0;
       width: calc(100% - 32px);
       background: #fff;
       color: #E4483A;
@@ -352,10 +343,6 @@
       font-family: 'Inter', sans-serif;
       font-size: 0.95rem;
       background: #fff;
-    }
-    .search-input:focus {
-      outline: none;
-      border-color: var(--tangerine);
     }
     .chip-row {
       display: flex;
@@ -456,7 +443,6 @@
       to { opacity: 0; transform: translateY(10px); }
     }
 
-    /* ---------- Footer ---------- */
     footer {
       margin-top: 40px;
       padding-top: 22px;
@@ -472,17 +458,6 @@
       margin-bottom: 4px;
     }
     footer a { color: var(--violet); text-decoration: none; font-weight: 600; }
-
-    @media (prefers-reduced-motion: reduce) {
-      .btn, .card, .form-container button { transition: none; }
-      .skeleton-img, .skeleton-line { animation: none; }
-      .toast { animation: none; opacity: 1; transform: none; }
-    }
-
-    :focus-visible {
-      outline: 2.5px solid var(--violet);
-      outline-offset: 2px;
-    }
   </style>
 </head>
 <body>
@@ -500,21 +475,21 @@
           <button type="button" id="tab-signup-btn" class="tab-btn" onclick="showTab('signup')">Qeydiyyat</button>
         </div>
 
-        <form id="login-form" onsubmit="event.preventDefault(); signIn(); return false;">
-          <input type="email" id="login-email" name="email" class="field" placeholder="E-poçt ünvanı" autocomplete="username">
-          <input type="password" id="login-password" name="password" class="field" placeholder="Şifrə" autocomplete="current-password">
+        <form id="login-form" onsubmit="event.preventDefault(); signIn();">
+          <input type="email" id="login-email" name="email" class="field" placeholder="E-poçt ünvanı" required autocomplete="username">
+          <input type="password" id="login-password" name="password" class="field" placeholder="Şifrə" required autocomplete="current-password">
           <label class="remember-row">
             <input type="checkbox" id="remember-me" checked>
             <span>Məni yadda saxla</span>
           </label>
-          <button type="button" onclick="signIn()" class="btn btn-primary">Giriş Et</button>
+          <button type="submit" class="btn btn-primary">Giriş Et</button>
         </form>
 
-        <form id="signup-form" onsubmit="event.preventDefault(); signUp(); return false;" style="display: none;">
-          <input type="text" id="signup-name" name="name" class="field" placeholder="Ad Soyad" autocomplete="name">
-          <input type="email" id="signup-email" name="email" class="field" placeholder="E-poçt ünvanı" autocomplete="username">
-          <input type="password" id="signup-password" name="password" class="field" placeholder="Şifrə" autocomplete="new-password">
-          <button type="button" onclick="signUp()" class="btn btn-secondary">Qeydiyyatdan Keç</button>
+        <form id="signup-form" onsubmit="event.preventDefault(); signUp();" style="display: none;">
+          <input type="text" id="signup-name" name="name" class="field" placeholder="Ad Soyad" required autocomplete="name">
+          <input type="email" id="signup-email" name="email" class="field" placeholder="E-poçt ünvanı" required autocomplete="username">
+          <input type="password" id="signup-password" name="password" class="field" placeholder="Şifrə" required autocomplete="new-password">
+          <button type="submit" class="btn btn-secondary">Qeydiyyatdan Keç</button>
         </form>
     </div>
     <div id="user-info" style="display: none;">
@@ -522,7 +497,6 @@
         <button onclick="signOut()" class="btn btn-danger">Çıxış Et</button>
     </div>
   </div>
-
 
   <div class="form-container">
     <h3>Yeni Elan Əlavə Et</h3>
@@ -569,22 +543,6 @@
   <div id="toast-container"></div>
 
   <script>
-    window.addEventListener('error', function(e) {
-      const banner = document.createElement('div');
-      banner.style.cssText = 'background:#E4483A;color:#fff;padding:14px;border-radius:12px;margin:14px;font-family:sans-serif;font-weight:600;font-size:0.85rem;';
-      banner.textContent = 'Xəta: ' + e.message + ' (sətir ' + e.lineno + ')';
-      document.body.insertAdjacentElement('afterbegin', banner);
-    });
-
-    if (typeof supabase === 'undefined') {
-      document.body.insertAdjacentHTML('afterbegin',
-        '<div style="background:#E4483A;color:#fff;padding:14px;border-radius:12px;margin:14px 0;font-family:sans-serif;font-weight:600;">' +
-        'Sayt tam yüklənmədi (internet bağlantısı problemi ola bilər). Səhifəni yeniləyin və ya başqa brauzerdə (Chrome) açın.' +
-        '</div>'
-      );
-      throw new Error('Supabase library failed to load from CDN');
-    }
-
     const SUPABASE_URL = "https://sqtiawgpiyevphybilen.supabase.co";
     const SUPABASE_KEY = "sb_publishable_qLFPLKZe80duJ7zYssQJXg_1lu_lsMV";
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -639,4 +597,41 @@
       const sortBy = document.getElementById('sort-select').value;
 
       let filtered = allAnnouncements.filter(item => {
-        const matchesCategory = activeCategory === 'Hamısı' 
+        const matchesCategory = activeCategory === 'Hamısı' || item.category === activeCategory;
+        const matchesQuery = !query || item.title.toLowerCase().includes(query);
+        return matchesCategory && matchesQuery;
+      });
+
+      if (sortBy === 'price-asc') {
+        filtered = filtered.slice().sort((a, b) => a.price - b.price);
+      } else if (sortBy === 'price-desc') {
+        filtered = filtered.slice().sort((a, b) => b.price - a.price);
+      } else if (allAnnouncements.some(item => item.created_at)) {
+        filtered = filtered.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      }
+
+      renderAnnouncements(filtered);
+    }
+
+    function renderAnnouncements(items) {
+      const container = document.getElementById('announcements-list');
+      if (!container) return;
+
+      if (!items || items.length === 0) {
+        container.innerHTML = '<div class="empty-state">Uyğun elan tapılmadı.</div>';
+        return;
+      }
+
+      container.innerHTML = items.map(item => {
+        const isOwner = currentUser && currentUser.id === item.user_id;
+        const ownerName = item.full_name || item.owner_name || 'İstifadəçi';
+        return `
+            <div class="card">
+                ${item.image_url ? `<img src="${item.image_url}" loading="lazy">` : ''}
+                <div class="card-body">
+                  <h3>${item.title}</h3>
+                  <span class="price">${item.price} AZN</span>
+                  <span class="cat-pill ${categoryClass(item.category)}">${item.category}</span>
+                  <p class="desc">${item.description || ''}</p>
+                  <p class="contact"><strong>Elan sahibi:</strong> ${ownerName}</p>
+                  <p class="con
