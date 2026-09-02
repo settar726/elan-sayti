@@ -3,60 +3,409 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Elan Saytı</title>
+  <title>ElanSaytı — Müasir Elan Platforması</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    body { font-family: sans-serif; background: #f8fafc; margin: 0; padding: 15px; color: #1e293b; }
-    h1, h2, h3 { text-align: center; }
-    .box { background: #fff; padding: 20px; border-radius: 12px; max-width: 450px; margin: 0 auto 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-    input, select, textarea, button { width: 100%; padding: 12px; margin: 6px 0 12px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
-    button { background: #2563eb; color: #fff; font-weight: bold; border: none; cursor: pointer; }
-    button.red { background: #dc2626; }
-    button.green { background: #16a34a; }
-    .announcements { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; max-width: 900px; margin: 0 auto; }
-    .card { background: #fff; border-radius: 12px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-    .card img { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; }
-    .price { font-size: 1.2em; font-weight: bold; color: #16a34a; }
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 16px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.01);
+      --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.08), 0 8px 10px -6px rgba(0,0,0,0.03);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding-bottom: 60px;
+    }
+
+    /* ---------- Header ---------- */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+
+    .header-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: var(--primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-badge {
+      background: rgba(37, 99, 235, 0.1);
+      color: var(--primary);
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    /* ---------- Layout Container ---------- */
+    .container {
+      max-width: 1100px;
+      margin: 32px auto 0;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 32px;
+    }
+
+    @media (max-width: 850px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ---------- Cards & Form ---------- */
+    .panel {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 24px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .panel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text-muted);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      background: #fafafa;
+      color: var(--text);
+      transition: all 0.2s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* ---------- Buttons ---------- */
+    .btn {
+      width: 100%;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 10px;
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .btn-secondary:hover {
+      background: #e2e8f0;
+    }
+
+    .btn-danger {
+      background: #fef2f2;
+      color: #ef4444;
+      border: 1px solid #fecaca;
+    }
+
+    .btn-danger:hover {
+      background: #fee2e2;
+    }
+
+    /* ---------- Announcement Grid ---------- */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .announcements-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .card-img-wrapper {
+      width: 100%;
+      height: 160px;
+      background: #e2e8f0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .card-category {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(4px);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .card-body {
+      padding: 16px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      line-height: 1.3;
+      color: var(--text);
+    }
+
+    .card-price {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .card-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      flex: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-footer {
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .card-footer strong {
+      color: var(--text);
+    }
+
+    .user-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f1f5f9;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+      width: 100%;
+    }
   </style>
 </head>
 <body>
 
-  <h1>Elan Saytı</h1>
+  <header>
+    <div class="header-container">
+      <a href="#" class="logo">
+        ElanSaytı <span class="logo-badge">PRO</span>
+      </a>
+    </div>
+  </header>
 
-  <!-- Giriş və Qeydiyyat -->
-  <div class="box" id="auth-box">
-    <h3>Giriş / Qeydiyyat</h3>
-    <input type="text" id="fullname" placeholder="Ad və Soyadınız">
-    <input type="email" id="email" placeholder="E-poçt ünvanı">
-    <input type="password" id="password" placeholder="Şifrə">
-    <button onclick="signUp()" class="green">Qeydiyyatdan Keç</button>
-    <button onclick="signIn()">Giriş Et</button>
+  <div class="container">
+    
+    <!-- Sol Tərəf: Hesab və Forma -->
+    <div class="sidebar">
+      
+      <!-- Giriş / Qeydiyyat Paneli -->
+      <div class="panel" id="auth-box">
+        <h3 class="panel-title">Hesaba Giriş</h3>
+        <div class="form-group">
+          <label>Ad və Soyad (Qeydiyyat üçün)</label>
+          <input type="text" id="fullname" placeholder="Orxan Məmmədov">
+        </div>
+        <div class="form-group">
+          <label>E-poçt Ünvanı</label>
+          <input type="email" id="email" placeholder="nümayəndə@mail.com">
+        </div>
+        <div class="form-group">
+          <label>Şifrə</label>
+          <input type="password" id="password" placeholder="••••••••">
+        </div>
+        <button onclick="signIn()" class="btn btn-primary">Giriş Et</button>
+        <button onclick="signUp()" class="btn btn-secondary">Qeydiyyatdan Keç</button>
+      </div>
+
+      <!-- Daxil Olmuş İstifadəçi Paneli -->
+      <div class="panel" id="user-box" style="display: none;">
+        <div class="user-badge" id="user-name">👤 Xoş gəldiniz</div>
+        <button onclick="signOut()" class="btn btn-danger">Hesabdan Çıx</button>
+      </div>
+
+      <!-- Elan Əlavə Etmə Paneli -->
+      <div class="panel">
+        <h3 class="panel-title">Yeni Elan Yerləşdir</h3>
+        <div class="form-group">
+          <label>Elan Başlığı</label>
+          <input type="text" id="title" placeholder="Məs: iPhone 13 Pro Max">
+        </div>
+        <div class="form-group">
+          <label>Qiymət (AZN)</label>
+          <input type="number" id="price" placeholder="Məs: 1200">
+        </div>
+        <div class="form-group">
+          <label>Əlaqə Nömrəsi</label>
+          <input type="tel" id="phone" placeholder="050 000 00 00">
+        </div>
+        <div class="form-group">
+          <label>Kateqoriya</label>
+          <select id="category">
+            <option value="Nəqliyyat">🚗 Nəqliyyat</option>
+            <option value="Daşınmaz Əmlak">🏠 Daşınmaz Əmlak</option>
+            <option value="Elektronika">📱 Elektronika</option>
+            <option value="Digər">📦 Digər</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Ətraflı Məlumat</label>
+          <textarea id="description" placeholder="Məhsul haqqında qısa məlumat yazın..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Şəkil Yüklə</label>
+          <input type="file" id="image" accept="image/*">
+        </div>
+        <button onclick="addAnnouncement()" class="btn btn-primary">Elanı Dərc Et</button>
+      </div>
+
+    </div>
+
+    <!-- Sağ Tərəf: Elanlar Siyahısı -->
+    <div class="content">
+      <div class="section-header">
+        <h2 class="section-title">Son Elanlar</h2>
+      </div>
+      <div class="announcements-grid" id="list"></div>
+    </div>
+
   </div>
-
-  <div class="box" id="user-box" style="display: none;">
-    <h3 id="user-name"></h3>
-    <button onclick="signOut()" class="red">Çıxış Et</button>
-  </div>
-
-  <!-- Elan Əlavə Et -->
-  <div class="box">
-    <h3>Yeni Elan Əlavə Et</h3>
-    <input type="text" id="title" placeholder="Elan başlığı">
-    <input type="number" id="price" placeholder="Qiymət (AZN)">
-    <input type="tel" id="phone" placeholder="Əlaqə nömrəsi">
-    <select id="category">
-      <option value="Nəqliyyat">Nəqliyyat</option>
-      <option value="Daşınmaz Əmlak">Daşınmaz Əmlak</option>
-      <option value="Elektronika">Elektronika</option>
-      <option value="Digər">Digər</option>
-    </select>
-    <textarea id="description" placeholder="Ətraflı məlumat"></textarea>
-    <input type="file" id="image" accept="image/*">
-    <button onclick="addAnnouncement()" class="green">Elanı Yerləşdir</button>
-  </div>
-
-  <h2>Elanlar</h2>
-  <div class="announcements" id="list"></div>
 
   <script>
     const SUPABASE_URL = "https://sqtiawgpiyevphybilen.supabase.co";
@@ -98,7 +447,7 @@
         document.getElementById('auth-box').style.display = 'none';
         document.getElementById('user-box').style.display = 'block';
         const name = user.user_metadata?.full_name || user.email;
-        document.getElementById('user-name').innerText = "Xoş gəldiniz, " + name;
+        document.getElementById('user-name').innerText = "👤 " + name;
       }
     }
 
@@ -111,20 +460,31 @@
       const list = document.getElementById('list');
       list.innerHTML = '';
 
+      if (data.length === 0) {
+        list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">Hələ heç bir elan yoxdur.</div>';
+        return;
+      }
+
       data.forEach(item => {
         const isOwner = user && user.id === item.user_id;
         const owner = item.full_name || item.owner_name || 'İstifadəçi';
 
         list.innerHTML += `
           <div class="card">
-            ${item.image_url ? `<img src="${item.image_url}">` : ''}
-            <h3>${item.title}</h3>
-            <p class="price">${item.price} AZN</p>
-            <p><b>Kateqoriya:</b> ${item.category}</p>
-            <p>${item.description || ''}</p>
-            <p><b>Əlaqə:</b> ${item.phone}</p>
-            <p><b>Elan sahibi:</b> ${owner}</p>
-            ${isOwner ? `<button onclick="deleteItem('${item.id}')" class="red">Sil</button>` : ''}
+            <div class="card-img-wrapper">
+              <span class="card-category">${item.category}</span>
+              ${item.image_url ? `<img src="${item.image_url}" class="card-img">` : '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#94a3b8;">Şəkil yoxdur</div>'}
+            </div>
+            <div class="card-body">
+              <div class="card-price">${item.price} AZN</div>
+              <h3 class="card-title">${item.title}</h3>
+              <p class="card-desc">${item.description || ''}</p>
+              <div class="card-footer">
+                <div><strong>Satıcı:</strong> ${owner}</div>
+                <div><strong>Əlaqə:</strong> ${item.phone}</div>
+              </div>
+              ${isOwner ? `<button onclick="deleteItem('${item.id}')" class="btn btn-danger" style="margin-top:12px;">Elanı Sil</button>` : ''}
+            </div>
           </div>
         `;
       });
