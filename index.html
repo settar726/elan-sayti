@@ -123,6 +123,33 @@
     .btn-danger { background: #fff; color: #E4483A; border: 1.5px solid #F3B3AC; box-shadow: none; }
     .btn-danger:hover { background: #FFF1EF; }
 
+    .tab-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      background: #F4EFE6;
+      padding: 5px;
+      border-radius: 12px;
+    }
+    .tab-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 10px 12px;
+      border-radius: 9px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: #8A8578;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .tab-btn.active {
+      background: #fff;
+      color: var(--ink);
+      box-shadow: 0 4px 10px rgba(36,33,30,0.10);
+    }
+
     .remember-row {
       display: flex;
       align-items: center;
@@ -328,25 +355,35 @@
   </div>
 
   <div id="auth-container" class="auth-card">
-    <form id="auth-inputs" onsubmit="return false;">
-        <h3>Giriş / Qeydiyyat</h3>
-        <input type="text" id="auth-name" name="name" class="field" placeholder="Ad Soyad (qeydiyyat üçün)" autocomplete="name">
-        <input type="email" id="auth-email" name="email" class="field" placeholder="E-poçt ünvanı" autocomplete="username">
-        <input type="password" id="auth-password" name="password" class="field" placeholder="Şifrə" autocomplete="current-password">
-        <label class="remember-row">
-          <input type="checkbox" id="remember-me" checked>
-          <span>Məni yadda saxla</span>
-        </label>
-        <div class="btn-row">
-          <button type="submit" onclick="signIn()" class="btn btn-primary">Giriş Et</button>
-          <button type="submit" onclick="signUp()" class="btn btn-secondary">Qeydiyyat</button>
+    <div id="auth-inputs">
+        <div class="tab-row">
+          <button type="button" id="tab-login-btn" class="tab-btn active" onclick="showTab('login')">Giriş</button>
+          <button type="button" id="tab-signup-btn" class="tab-btn" onclick="showTab('signup')">Qeydiyyat</button>
         </div>
-    </form>
+
+        <form id="login-form" onsubmit="return false;">
+          <input type="email" id="login-email" name="email" class="field" placeholder="E-poçt ünvanı" autocomplete="username">
+          <input type="password" id="login-password" name="password" class="field" placeholder="Şifrə" autocomplete="current-password">
+          <label class="remember-row">
+            <input type="checkbox" id="remember-me" checked>
+            <span>Məni yadda saxla</span>
+          </label>
+          <button type="submit" onclick="signIn()" class="btn btn-primary">Giriş Et</button>
+        </form>
+
+        <form id="signup-form" onsubmit="return false;" style="display: none;">
+          <input type="text" id="signup-name" name="name" class="field" placeholder="Ad Soyad" autocomplete="name">
+          <input type="email" id="signup-email" name="email" class="field" placeholder="E-poçt ünvanı" autocomplete="username">
+          <input type="password" id="signup-password" name="password" class="field" placeholder="Şifrə" autocomplete="new-password">
+          <button type="submit" onclick="signUp()" class="btn btn-secondary">Qeydiyyatdan Keç</button>
+        </form>
+    </div>
     <div id="user-info" style="display: none;">
         <p id="user-email"></p>
         <button onclick="signOut()" class="btn btn-danger">Çıxış Et</button>
     </div>
   </div>
+
 
   <div class="form-container">
     <h3>Yeni Elan Əlavə Et</h3>
@@ -474,10 +511,29 @@
       }
     }
 
+    function showTab(tab) {
+      const loginForm = document.getElementById('login-form');
+      const signupForm = document.getElementById('signup-form');
+      const loginBtn = document.getElementById('tab-login-btn');
+      const signupBtn = document.getElementById('tab-signup-btn');
+
+      if (tab === 'login') {
+        loginForm.style.display = 'block';
+        signupForm.style.display = 'none';
+        loginBtn.classList.add('active');
+        signupBtn.classList.remove('active');
+      } else {
+        loginForm.style.display = 'none';
+        signupForm.style.display = 'block';
+        loginBtn.classList.remove('active');
+        signupBtn.classList.add('active');
+      }
+    }
+
     async function signUp() {
-      const name = document.getElementById('auth-name').value;
-      const email = document.getElementById('auth-email').value;
-      const password = document.getElementById('auth-password').value;
+      const name = document.getElementById('signup-name').value;
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
       if (!name || !email || !password) return alert('Ad, e-poçt və şifrəni daxil edin!');
 
       const { error } = await _supabase.auth.signUp({
@@ -486,12 +542,16 @@
         options: { data: { full_name: name } }
       });
       if (error) alert("Qeydiyyat xətası: " + error.message);
-      else alert("Qeydiyyat uğurludur! Giriş edə bilərsiniz.");
+      else {
+        alert("Qeydiyyat uğurludur! İndi giriş edə bilərsiniz.");
+        showTab('login');
+        document.getElementById('login-email').value = email;
+      }
     }
 
     async function signIn() {
-      const email = document.getElementById('auth-email').value;
-      const password = document.getElementById('auth-password').value;
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
       const remember = document.getElementById('remember-me').checked;
       if (!email || !password) return alert('E-poçt və şifrəni daxil edin!');
 
@@ -523,7 +583,7 @@
       } else {
           const rememberedEmail = localStorage.getItem('remembered_email');
           if (rememberedEmail) {
-            document.getElementById('auth-email').value = rememberedEmail;
+            document.getElementById('login-email').value = rememberedEmail;
           }
       }
     }
@@ -532,4 +592,5 @@
     loadAnnouncements();
   </script>
 </body>
-</html>
+  </html>
+  
