@@ -683,26 +683,31 @@
     function closeModal(id) {
       document.getElementById(id).classList.remove('active');
     }
+function switchTab(tabName) {
+  document.querySelectorAll('#auth-box .tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('#auth-box .tab-content').forEach(content => content.classList.remove('active'));
 
-    function switchTab(tabName) {
-      document.querySelectorAll('#auth-box .tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('#auth-box .tab-content').forEach(content => content.classList.remove('active'));
+  if (tabName === 'login') {
+    document.querySelectorAll('#auth-box .tab-btn')[0].classList.add('active');
+    document.getElementById('login-tab').classList.add('active');
+  } else {
+    document.querySelectorAll('#auth-box .tab-btn')[1].classList.add('active');
+    document.getElementById('register-tab').classList.add('active');
+  }
+}
 
-      if (tabName === 'login') {
-        document.querySelectorAll('#auth-box .tab-btn')[0].classList.add('active');
-        document.getElementById('login-tab').classList.add('active');
-      } else {
-        document.querySelectorAll('#auth-box .tab-btn')[1].classList.add('active');
-        document.getElementById('register-tab').classList.add('active');
-      }
-    }
+function switchTabMobile(tabName) {
+  document.querySelectorAll('#m-auth-box .tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('#m-auth-box .tab-content').forEach(content => content.classList.remove('active'));
 
-    function switchTabMobile(tabName) {
-      document.querySelectorAll('#m-auth-box .tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('#m-auth-box .tab-content').forEach(content => content.classList.remove('active'));
-
-      if (tabName === 'login') {
-        document.querySelectorAll('#m-auth-box .tab-btn')[0].classList.add('active');
-        document.getElementById('m-login-tab').classList.add('active');
-      } else {
-        document.querySelectorAll(
+  if (tabName === 'login') {
+    document.querySelectorAll('#m-auth-box .tab-btn')[0].classList.add('active');
+    document.getElementById('m-login-tab').classList.add('active');
+  } else {
+    document.querySelectorAll('#m-auth-box .tab-btn')[1].classList.add('active');
+    document.getElementById('m-register-tab').classList.add('active');
+  }
+}
+</script>
+</body>
+</html>
